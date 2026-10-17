@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>알 부화 몬스터 키우기</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7044573074037726" crossorigin="anonymous"></script>
+<script>
+/* ===== 보상형 광고 (구글 H5 Games Ads) =====
+   승인이 나기 전에는 H5_ADS=false 로 두세요 (버튼은 3초 연출로 동작해요).
+   승인 후 H5_ADS=true 로 바꾸면 모든 "광고 보고 …" 버튼이 진짜 보상형 광고로 바뀌어요.
+   테스트: 주소 끝에 ?adtest=1 을 붙이면 가짜 광고로 시험할 수 있어요 (H5_ADS=true 일 때). */
+var H5_ADS=false;
+window.adsbygoogle=window.adsbygoogle||[];
+var adBreak=adConfig=function(o){window.adsbygoogle.push(o)};
+if(/[?&]adtest=1/.test(location.search)){var _t=document.querySelector('script[src*="adsbygoogle.js"]');if(_t)_t.setAttribute('data-adbreak-test','on')}
+if(H5_ADS)adConfig({preloadAdBreaks:'on',sound:'on'});
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
@@ -352,10 +363,21 @@ if(v.a=='p'){ack($('pm'+v.i),'atk');await sl(250);if(!skip)shot($('pm'+v.i),$('e
 else{await sl(80);ack($('en'),'eatk');await sl(250);if(!skip)shot($('en'),$('pm'+v.i),e);await sl(230);hit($('pm'+v.i),'-'+nf(v.d));bar('mb'+v.i,v.h/mhp(pt[v.i])*100);if(v.h<=0)$('pm'+v.i).classList.add('ko');await sl(250)}}
 if(win){if(!skip)boom($('en'),e,fl%5==0);$('en').classList.add('die')}
 await sl(700);$('bm').innerHTML=(win?'🎉 ':'😢 ')+res;dunInit();const rem=dRem();$('bx').innerHTML=rem>0?`<button class="grow" onclick="retry()">${win&&S.dun.floor>fl?'▶ '+S.dun.floor+'층 도전':'🔄 재도전'} (남은 ${rem}회)</button>`:`<button class="s grow" onclick="retryAd()">📺 광고 보고 +3회</button>`;const b=$('bb');b.textContent='닫기';b.className='';b.onclick=()=>{o.style.display='none';busy=false}}
-function ad(){const e=document.getElementById('ad');let n=3;e.style.display='flex';const u=()=>e.textContent=`📺 광고 시청 중… ${n}초`;u();const h=setInterval(()=>{n--;if(n<=0){clearInterval(h);e.style.display='none';dunInit();S.dun.extra+=3;save();render();toast('던전 입장 +3회!')}else u()},1000)}
+function ad(){watchAd(()=>{dunInit();S.dun.extra+=3;save();render();toast('던전 입장 +3회!')})}
 /* 광고 보고 남은 시간 절반 단축 (파견·부화기, 각 1회, 하루 10회) — 지금은 3초짜리 연출이고 실제 광고 연결 지점은 watchAd 하나예요 */
 function adLeft(){S.x=S.x||{};const a=S.x.adc=S.x.adc||{d:'',n:0};if(a.d!==today()){a.d=today();a.n=0}return Math.max(0,10-a.n)}
-function watchAd(cb){const e=document.getElementById('ad');if(e.style.display=='flex')return;let n=3;e.style.display='flex';const u=()=>e.textContent='📺 광고 시청 중… '+n+'초';u();const h=setInterval(()=>{n--;if(n<=0){clearInterval(h);e.style.display='none';cb()}else u()},1000)}
+let adBusy=false;
+function watchAd(cb){if(adBusy)return;
+if(typeof H5_ADS!=='undefined'&&H5_ADS&&typeof adBreak==='function'){
+adBusy=true;let ok=false;const rel=setTimeout(()=>{adBusy=false},120000);
+try{adBreak({type:'reward',name:'game_reward',
+beforeReward:showAd=>showAd(),
+adViewed:()=>{ok=true;cb()},
+adDismissed:()=>toast('광고를 끝까지 봐야 보상을 받을 수 있어요'),
+adBreakDone:info=>{clearTimeout(rel);adBusy=false;const st=info&&info.breakStatus;if(!ok&&st!=='dismissed')toast('지금은 볼 수 있는 광고가 없어요. 잠시 후 다시 시도해 주세요')}})}
+catch(e){clearTimeout(rel);adBusy=false;toast('광고를 불러오지 못했어요')}
+return}
+const e=document.getElementById('ad');if(e.style.display=='flex')return;adBusy=true;let n=3;e.style.display='flex';const u=()=>e.textContent='📺 광고 시청 중… '+n+'초';u();const h=setInterval(()=>{n--;if(n<=0){clearInterval(h);e.style.display='none';adBusy=false;cb()}else u()},1000)}
 function adCut(k,i){if(!adLeft())return toast('오늘은 광고를 모두 봤어요 (하루 10회)');const o=k=='i'?S.inc[i]:S.disp[i];if(!o||o.ad)return;
 watchAd(()=>{const p=k=='i'?S.inc[i]:S.disp[i];if(!p||p!==o)return toast('대상이 바뀌어서 취소됐어요');const rem=(k=='i'?p.t0+p.dur*1000:dEnd(p))-now();if(rem<=0)return;p.t0-=rem/2;p.ad=1;adLeft();S.x.adc.n++;save();render();toast('📺 남은 시간이 절반으로 줄었어요!')})}
 // 화면
