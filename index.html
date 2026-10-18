@@ -350,10 +350,11 @@ const p=mk(26),an=p.animate([{transform:`translate(${x0}px,${y0}px) scale(.6) ro
 an.onfinish=()=>{p.remove();for(let i=0;i<n;i++){const q=mk(16),t=Math.PI*2*i/n+Math.random(),d=26+Math.random()*20;q.animate([{transform:`translate(${x1}px,${y1}px)`,opacity:1},{transform:`translate(${x1+Math.cos(t)*d}px,${y1+Math.sin(t)*d+by}px) scale(.4)`,opacity:0}],{duration:450,easing:'ease-out'}).onfinish=()=>q.remove()}}}
 function hit(el,txt,cls){if(cls!='gold')ack(el,'hit');const d=document.createElement('span');d.className='dmg '+(cls||'');d.textContent=txt;d.style.marginLeft=(Math.random()*36-18)+'px';el.appendChild(d);setTimeout(()=>d.remove(),900)}
 function retry(){document.getElementById('bt').style.display='none';busy=false;enter()}
+function btClose(){document.getElementById('bt').style.display='none';busy=false}
 function retryAd(){document.getElementById('bt').style.display='none';busy=false;ad()}
-async function battle(pt,fl,e,E,win,res,evs){busy=true;skip=false;const o=document.getElementById('bt'),EM=EMJ[fl%4],$=id=>document.getElementById(id),bar=(id,v)=>{const x=$(id);if(x)x.style.width=Math.max(0,v)+'%'};
+async function battle(pt,fl,e,E,win,res,evs,opt){busy=true;skip=false;const o=document.getElementById('bt'),EM=(opt&&opt.emoji)||EMJ[fl%4],$=id=>document.getElementById(id),bar=(id,v)=>{const x=$(id);if(x)x.style.width=Math.max(0,v)+'%'};
 o.style.display='flex';
-o.innerHTML=`<div class="bf"><div class="row"><b>${fl}층</b>${elT(e)}<div class="grow"><div class="bar" style="margin:0"><i id="ehp" style="width:100%;background:#ef6b6b;transition:width .4s"></i></div></div><span id="ehpt" class="mu">${nf(E)}</span></div>
+o.innerHTML=`<div class="bf"><div class="row"><b>${(opt&&opt.title)||fl+'층'}</b>${elT(e)}<div class="grow"><div class="bar" style="margin:0"><i id="ehp" style="width:${opt&&opt.start!=null?opt.start:100}%;background:#ef6b6b;transition:width .4s"></i></div></div><span id="ehpt" class="mu">${nf(opt&&opt.e0!=null?opt.e0:E)}</span></div>
 <div class="arena" style="background:${ARB(e)}"><div class="side">${pt.map((m,i)=>`<div class="pm" id="pm${i}"><div class="te">${SP[m.sp][1]}</div><div class="bar" style="height:6px;width:56px;margin:2px auto"><i id="mb${i}" style="width:100%;transition:width .3s"></i></div>${SP[m.sp][0]}</div>`).join('')}</div><div class="en" id="en" style="filter:drop-shadow(0 0 10px ${EL[e][2]})">${EM}</div></div>
 <div id="bm" style="min-height:64px;text-align:center">⚔️ 전투 시작!</div><div id="bx" class="row"></div><button id="bb" class="s">건너뛰기</button></div>`;
 $('bb').onclick=()=>{skip=true};
@@ -361,8 +362,8 @@ await sl(500);
 for(const v of evs){
 if(v.a=='p'){ack($('pm'+v.i),'atk');await sl(250);if(!skip)shot($('pm'+v.i),$('en'),ELM[pt[v.i].sp]);await sl(230);hit($('en'),'-'+nf(v.d)+(v.k>1?' 💥':v.k<1?' …':''));bar('ehp',v.eh/E*100);$('ehpt').textContent=nf(v.eh);await sl(200)}
 else{await sl(80);ack($('en'),'eatk');await sl(250);if(!skip)shot($('en'),$('pm'+v.i),e);await sl(230);hit($('pm'+v.i),'-'+nf(v.d));bar('mb'+v.i,v.h/mhp(pt[v.i])*100);if(v.h<=0)$('pm'+v.i).classList.add('ko');await sl(250)}}
-if(win){if(!skip)boom($('en'),e,fl%5==0);$('en').classList.add('die')}
-await sl(700);$('bm').innerHTML=(win?'🎉 ':'😢 ')+res;dunInit();const rem=dRem();$('bx').innerHTML=rem>0?`<button class="grow" onclick="retry()">${win&&S.dun.floor>fl?'▶ '+S.dun.floor+'층 도전':'🔄 재도전'} (남은 ${rem}회)</button>`:`<button class="s grow" onclick="retryAd()">📺 광고 보고 +3회</button>`;const b=$('bb');b.textContent='닫기';b.className='';b.onclick=()=>{o.style.display='none';busy=false}}
+if(win){if(!skip)boom($('en'),e,opt?!!opt.big:fl%5==0);$('en').classList.add('die')}
+await sl(700);$('bm').innerHTML=((opt&&opt.icon)||(win?'🎉 ':'😢 '))+res;if(opt){$('bx').innerHTML=opt.bx||''}else{dunInit();const rem=dRem();$('bx').innerHTML=rem>0?`<button class="grow" onclick="retry()">${win&&S.dun.floor>fl?'▶ '+S.dun.floor+'층 도전':'🔄 재도전'} (남은 ${rem}회)</button>`:`<button class="s grow" onclick="retryAd()">📺 광고 보고 +3회</button>`}const b=$('bb');b.textContent='닫기';b.className='';b.onclick=()=>{o.style.display='none';busy=false}}
 function ad(){watchAd(()=>{dunInit();S.dun.extra+=3;save();render();toast('던전 입장 +3회!')})}
 /* 광고 보고 남은 시간 절반 단축 (파견·부화기, 각 1회, 하루 10회) — 지금은 3초짜리 연출이고 실제 광고 연결 지점은 watchAd 하나예요 */
 function adLeft(){S.x=S.x||{};const a=S.x.adc=S.x.adc||{d:'',n:0};if(a.d!==today()){a.d=today();a.n=0}return Math.max(0,10-a.n)}
@@ -558,16 +559,17 @@ function xAc(){const x=xI(),a=x.att,i=xAi();if(i.done)return;a.s=i.next;a.l=toda
 const xTE=f=>Math.floor(100*Math.pow(1.2,f-1));
 function xTad(){const c=xSl();if((c.adt||0)>=5)return toast('오늘은 광고를 모두 봤어요 (하루 5회)');
 watchAd(()=>{const k=xSl();if((k.adt||0)>=5)return;k.adt=(k.adt||0)+1;xI().tk+=2;save();render();toast('📺 탑 도전권 +2!')})}
-function xTower(){const x=xI();if(x.tk<=0)return toast('오늘 탑 도전권을 모두 썼어요');
+function xTower(){if(busy)return;const x=xI();if(x.tk<=0)return toast('오늘 탑 도전권을 모두 썼어요');
 const f=x.tw.f,e=dEl(f),pt=dParty(f);if(!pt.length)return toast('몬스터가 필요해요');
-const R=sim(pt,e,xTE(f));
+const E=xTE(f),R=sim(pt,e,E);let t;
 if(R.win){x.tk--;const g=gm(300+f*80),s=sm(5+f*1.2),o=2+Math.floor(f/4);S.gold+=g;S.stone+=s;S.ore+=o;
-let t=f+'층 돌파! 🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o;
-if(f%5==0){giveEgg(null,true);t+=' 🥚고급 알'}
-if(f%10==0){t+=' · '+itN(mkItem(f*4))}
-x.tw.f=f+1;x.tw.b=Math.max(x.tw.b||0,f);x.tres=t;toast('🗼 '+t)}
-else{x.tres=f+'층 도전 실패… 도전권은 차감되지 않았어요';toast(x.tres)}
-save();render()}
+t=f+'층 돌파!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o;
+if(f%5==0){giveEgg(null,true);t+='<br>🥚 고급 알'}
+if(f%10==0){t+='<br>'+itN(mkItem(f*4))}
+x.tw.f=f+1;x.tw.b=Math.max(x.tw.b||0,f)}
+else t=f+'층 도전 실패…<br>도전권은 차감되지 않았어요';
+x.tres=t.replace(/<br>/g,' · ');save();render();
+battle(pt,f,e,E,R.win,t,R.ev,{title:'🗼 '+f+'층',big:f%5==0,bx:x.tk>0?`<button class="grow" onclick="btClose();xTower()">${R.win?'▶ '+(f+1)+'층 도전':'🔄 재도전'} (남은 ${x.tk}회)</button>`:'<div class="mu">오늘 도전권을 모두 썼어요</div>'})}
 /* --- 훈련소 --- */
 const XTR=[{n:'30분',s:1800,l:1},{n:'3시간',s:10800,l:3},{n:'8시간',s:28800,l:6}],XTC=30;
 function xTs(i,k){const x=xI(),m=S.mons.find(a=>a.id==xsel)||S.mons.find(a=>a.st=='idle'&&a.lv<XTC);
@@ -713,10 +715,15 @@ const XWB={f:'화염의 군주 이프리트',w:'심해의 지배자 크라켄',g
 const XWT=[[8,{g:2000,s:15}],[20,{g:5000,s:40,o:10}],[40,{egg:'p',s:80,o:20}],[60,{egg:'h',s:150,o:40}],[80,{egg:'l',s:300,o:80}]];
 function xWk(){const d=new Date(),m=new Date(d.getFullYear(),d.getMonth(),d.getDate()-((d.getDay()+6)%7));return{key:m.toLocaleDateString('sv'),el:'fwgldtri'[Math.floor(m.getTime()/6048e5)%8]}}
 function xWb(){const x=xI(),w=xWk();if(!x.wb||x.wb.k!==w.key)x.wb={k:w.key,dmg:0,p0:0,c:{}};return x.wb}
-function xWsim(pt,e,B){const hp=pt.map(m=>mhp(m));let tot=0;for(let r=0;r<10;r++){for(let i=0;i<pt.length;i++){if(hp[i]>0)tot+=Math.max(1,Math.floor(ef(pt[i],e)*.5*(.9+Math.random()*.2)))}const A=hp.map((h,i)=>h>0?i:-1).filter(i=>i>=0);if(!A.length)break;const t=A[rn(A.length)];hp[t]=Math.max(0,hp[t]-Math.floor(B*.55*(.9+Math.random()*.2)));if(hp.every(h=>h<=0))break}return tot}
-function xWatk(){const w=xWb(),k=xWk().el,c=xSl();if((c.wb||0)>=3)return toast('오늘 도전 횟수를 모두 썼어요 (하루 3회)');
+function xWsim(pt,e,B,mx,rem0){const hp=pt.map(m=>mhp(m)),ev=[];let tot=0,rem=rem0;
+for(let r=0;r<10;r++){for(let i=0;i<pt.length;i++){if(hp[i]<=0)continue;const d=Math.max(1,Math.floor(ef(pt[i],e)*.5*(.9+Math.random()*.2)));tot+=d;rem=Math.max(0,rem-d);ev.push({a:'p',i,d,k:mul(ELM[pt[i].sp],e),eh:rem})}
+const A=hp.map((h,i)=>h>0?i:-1).filter(i=>i>=0);if(!A.length)break;const t=A[rn(A.length)],d=Math.floor(B*.55*(.9+Math.random()*.2));hp[t]=Math.max(0,hp[t]-d);ev.push({a:'e',i:t,d,h:hp[t]});if(hp.every(h=>h<=0))break}
+return{tot,ev}}
+function xWatk(){if(busy)return;const w=xWb(),k=xWk().el,c=xSl();if((c.wb||0)>=3)return toast('오늘 도전 횟수를 모두 썼어요 (하루 3회)');
 const pt=xPt(k);if(!pt.length)return toast('몬스터가 필요해요');const P=xPP(pt,k);if(!w.p0)w.p0=Math.max(50,P);
-const d=xWsim(pt,k,w.p0*.9);c.wb=(c.wb||0)+1;w.dmg+=d;w.last=d;save();render();toast('👹 피해 '+nf(d)+'!')}
+const mx=Math.floor(w.p0*XWT[4][0]),rem0=Math.max(0,mx-w.dmg),R=xWsim(pt,k,w.p0*.9,mx,rem0);
+c.wb=(c.wb||0)+1;w.dmg+=R.tot;w.last=R.tot;save();render();const left=3-c.wb;
+battle(pt,1,k,mx,0,'피해 <b>'+nf(R.tot)+'</b><br>이번 주 누적 '+nf(w.dmg)+' / '+nf(mx),R.ev,{title:'👹 '+XWB[k],emoji:EL[k][1],icon:'⚔️ ',big:false,start:mx?rem0/mx*100:100,e0:rem0,bx:left>0?`<button class="grow" onclick="btClose();xWatk()">🔄 한 번 더 (남은 ${left}회)</button>`:'<div class="mu">오늘 도전 횟수를 모두 썼어요</div>'})}
 function xWc(i){const w=xWb();if(w.c[i]||w.dmg<w.p0*XWT[i][0])return;w.c[i]=1;const x=xI();x.wbn=(x.wbn||0)+1;let t=xGive(XWT[i][1]);if(i==4)t+=' · '+itN(mkItem(80));save();render();toast('주간 보스 보상: '+t)}
 function xVw(){const w=xWb(),k=xWk().el,pt=xPt(k),P=xPP(pt,k),c=xSl(),left=3-(c.wb||0),mx=w.p0?w.p0*XWT[4][0]:0;
 const ref=w.p0||Math.max(50,P);
@@ -732,10 +739,13 @@ ${w.p0?`<div class="bar" style="margin:10px 0 2px"><i style="width:${Math.min(10
 const XEL=Object.keys(EL);
 const xTlE=n=>Math.floor(80*Math.pow(1.25,n-1)),xTlTot=()=>Object.values((S.x&&S.x.el)||{}).reduce((a,b)=>a+b,0);
 const _rbE=refreshBn;refreshBn=function(){_rbE();try{BN.f+=xTlTot()*.1}catch(e){}};
-function xTl(k){const x=xI(),c=xSl();x.el=x.el||{};if((c.tl||0)>=5)return toast('오늘 시련 도전권을 모두 썼어요 (하루 5회)');
+function xTl(k){if(busy)return;const x=xI(),c=xSl();x.el=x.el||{};if((c.tl||0)>=5)return toast('오늘 시련 도전권을 모두 썼어요 (하루 5회)');
 const f=(x.el[k]||0)+1,pt=xPt(k);if(!pt.length)return toast('몬스터가 필요해요');
-if(sim(pt,k,xTlE(f)).win){c.tl=(c.tl||0)+1;x.el[k]=f;const g=gm(200+f*60),s=sm(4+f),o=2+Math.floor(f/3);S.gold+=g;S.stone+=s;S.ore+=o;let t=EL[k][0]+' 시련 '+f+'층! 🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o;if(f%5==0){giveEgg(k);t+=' 🥚 '+EL[k][0]+' 속성 알'}save();render();toast(t)}
-else{toast(EL[k][0]+' 시련 '+f+'층 실패… 도전권은 차감되지 않았어요')}}
+const E=xTlE(f),R=sim(pt,k,E);let t;
+if(R.win){c.tl=(c.tl||0)+1;x.el[k]=f;const g=gm(200+f*60),s=sm(4+f),o=2+Math.floor(f/3);S.gold+=g;S.stone+=s;S.ore+=o;t=f+'층 클리어!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o;if(f%5==0){giveEgg(k);t+='<br>🥚 '+EL[k][0]+' 속성 알'}}
+else t=f+'층 실패…<br>도전권은 차감되지 않았어요';
+save();render();const left=5-(c.tl||0);
+battle(pt,f,k,E,R.win,t,R.ev,{title:EL[k][1]+' '+EL[k][0]+' 시련 '+f+'층',emoji:EL[k][1],big:f%5==0,bx:left>0?`<button class="grow" onclick="btClose();xTl('${k}')">${R.win?'▶ '+(f+1)+'층 도전':'🔄 재도전'} (남은 ${left}회)</button>`:'<div class="mu">오늘 시련 도전권을 모두 썼어요</div>'})}
 function xVe(){const x=xI(),c=xSl(),left=5-(c.tl||0),tot=xTlTot();x.el=x.el||{};
 const rows=XEL.map(k=>{const f=(x.el[k]||0)+1,E=xTlE(f),rec=Math.ceil(E*.6/10)*10,P=xPP(xPt(k),k),ok=P>=rec;return`<div class="card"><div class="row"><div class="grow">${elT(k)} <b>${f}층</b> <span class="mu">(${x.el[k]||0}층 클리어)</span><div class="mu" style="font-size:12px">추천 <b>${nf(rec)}</b> · 내 파티 <b style="color:${ok?'#4fd1a5':'#ff8a8a'}">${nf(P)}</b></div></div><button class="s" ${left>0?'':'disabled'} onclick="xTl('${k}')">도전</button></div></div>`}).join('');
 return`<div class="card"><div>깬 층 합계 <b>${tot}</b> → 전투력 <b style="color:#7dffc8">+${(tot*.1).toFixed(1)}%</b> <span class="mu">(영구)</span></div><div class="mu" style="margin-top:4px">오늘 남은 도전권 <b style="color:var(--ac)">${left}</b>/5 (진 도전은 차감 안 돼요)</div></div>`+rows+`<p class="mu">속성마다 따로 올라가요. 해당 속성에 상성이 좋은 몬스터가 자동으로 출전해요. 5층마다 그 속성의 알이 나와요.</p>`}
