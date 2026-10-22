@@ -344,7 +344,7 @@ const A=hp.map((h,i)=>h>0?i:-1).filter(i=>i>=0);if(!A.length)break;const t=A[rn(
 return{win:0,ev}}
 function enter(){if(busy)return;dunInit();if(dRem()<=0)return;const D=S.dun,fl=D.floor,e=dEl(fl),pt=dParty(fl);if(!pt.length)return toast('몬스터가 필요해요');const E=dEn(fl);
 const R=sim(pt,e,E),win=R.win;let t;
-if(win){D.used++;const g=gm((100+fl*40)*(1+BN.t/100)),s=sm((3+fl)*(1+BN.t/100)),it=mkItem(fl*3);const o=3+Math.floor(fl/3);S.st.dun++;S.gold+=g;S.stone+=s;S.ore+=o;t=`${fl}층 클리어!<br>골드 +${nf(g)}, 성장석 +${nf(s)}, 강화석 +${o}<br>${itN(it)}`;if(Math.random()<.04*(1+BN.d/100)){const eg=giveEgg(Math.random()<.5?e:null);t+='<br>🥚 '+(eg.el?EL[eg.el][0]+' 속성 ':'')+'알 획득!'}if(fl>=D.max){D.max=fl+1;D.floor=fl+1}}else{S.gold+=20;t='패배… 몬스터들이 버티지 못했어요<br>골드 +20<br>입장 횟수는 차감되지 않았어요'}
+if(win){D.used++;const dm=xDm(e),g=gm((100+fl*40)*(1+BN.t/100)*dm),s=sm((3+fl)*(1+BN.t/100)*dm),it=mkItem(fl*3);const o=(3+Math.floor(fl/3))*dm;S.st.dun++;if(dm>1)xI().dwn=(xI().dwn||0)+1;S.gold+=g;S.stone+=s;S.ore+=o;t=`${fl}층 클리어!<br>골드 +${nf(g)}, 성장석 +${nf(s)}, 강화석 +${o}<br>${itN(it)}`;if(dm>1)t+='<br>🌟 요일 속성 보너스 ×2';if(Math.random()<.04*(1+BN.d/100)){const eg=giveEgg(Math.random()<.5?e:null);t+='<br>🥚 '+(eg.el?EL[eg.el][0]+' 속성 ':'')+'알 획득!'}if(fl>=D.max){D.max=fl+1;D.floor=fl+1}}else{S.gold+=20;t='패배… 몬스터들이 버티지 못했어요<br>골드 +20<br>입장 횟수는 차감되지 않았어요'}
 save();render();battle(pt,fl,e,E,win,t,R.ev)}
 const sl=ms=>new Promise(r=>setTimeout(r,skip?0:ms));
 function ack(el,c){el.classList.remove(c);void el.offsetWidth;el.classList.add(c)}
@@ -684,7 +684,7 @@ R.f++;R.nf=0;xCh();save();if(!q)render();if(!q)battle(pt,f,e,E,1,t,Q.ev,{title:t
 else{const t=xRunEnd(0);if(!q)battle(pt,f,e,E,0,'전멸… '+f+'층에서 쓰러졌어요<br>'+t,Q.ev,{title:ti,hp0:h0,bx:'<button class="grow" onclick="btClose()">닫기</button>'})}}
 function xAuto(){if(busy)return;const x=xI();let n=0;while(x.run&&n<300){n++;const R=x.run,pt=R.ids.map(mon).filter(Boolean),mx=pt.reduce((a,m)=>a+mhp(m),0),fr=R.hp.reduce((a,h)=>a+h,0)/Math.max(1,mx),dead=R.hp.some(h=>h<=0),c=R.ch,ir=c.indexOf('r'),iu=c.indexOf('u'),ie=c.indexOf('e');
 if(!R.d&&fr<.45&&ir<0){xRunEnd(1);break}
-xPick(ir>=0&&(fr<.6||dead)?ir:iu>=0?iu:(ie>=0&&fr>=.75)?ie:c.indexOf('b'),1)}
+xPick(c[0]=='k'?0:ir>=0&&(fr<.6||dead)?ir:iu>=0?iu:(ie>=0&&fr>=.75)?ie:c.indexOf('b'),1)}
 if(n){save();render();if(x.tres)toast('⚡ 자동 등반 완료: '+x.tres)}}
 const xIdF=P=>Math.max(0,Math.floor(1+Math.log(Math.max(1,P)/(100*xDf().hp*.6))/Math.log(1.2)));
 function xIdR(F){const r={g:0,s:0,o:0},k=xDf().rw*.4;for(let f=1;f<=F;f++){r.g+=Math.floor(gm(300+f*80)*k);r.s+=Math.floor(sm(5+f*1.2)*k);r.o+=Math.floor((2+Math.floor(f/4))*k)}return r}
@@ -696,7 +696,7 @@ const xBar=(h,m)=>`<div class="bar" style="height:6px;margin:2px 0"><i style="wi
 function xVt(){const x=xI(),R=x.run,rc=x.rec=x.rec||{best:Math.max(0,x.tw.b||0),dBest:0,dDay:'',dDone:''};
 if(R){const pt=R.ids.map(mon).filter(Boolean);return`<div class="card"><div class="big" style="text-align:center">🗼</div><p style="text-align:center"><b style="font-size:20px">${R.f}층</b> <span class="mu">${R.d?'🏆 오늘의 도전':'등반'} · ${R.f-1}층 돌파${R.buf?' · ✨공격 +'+Math.round(R.buf*100)+'%':''}</span></p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">${pt.map((m,i)=>`<div class="mu" style="text-align:center;font-size:12px">${SP[m.sp][1]} ${nm(m)}${xBar(R.hp[i],mhp(m))}${R.hp[i]<=0?'💀':nf(Math.ceil(R.hp[i]))}</div>`).join('')}</div><div class="mu" style="text-align:center;margin:8px 0;font-size:12px">쌓인 보상 🪙${nf(R.rw.g)} 💎${nf(R.rw.s)} 🔨${nf(R.rw.o)}${R.egg?' 🥚×'+R.egg:''}<br>전멸하면 60% · 정산하고 나가면 100%</div><div style="display:grid;gap:6px">${R.ch.map((c,i)=>`<button class="s" style="text-align:left" onclick="xPick(${i})">${XN[c][0]} <b>${XN[c][1]}</b><br><span class="mu" style="font-size:12px">${XN[c][2]}</span></button>`).join('')}</div><div class="row" style="margin-top:8px"><button class="grow" onclick="xAuto()">⚡ 끝까지 자동 진행</button><button class="s grow" onclick="xRunEnd(1)">💰 정산하고 나가기</button></div></div>`}
 const id=x.idle,dn=id&&now()>=id.t0+XIDL*1000,dd=rc.dDone===today();
-return`<div class="card"><div class="big" style="text-align:center">🗼</div><p style="text-align:center"><b style="font-size:18px">무한의 탑</b><br><span class="mu">최고 ${rc.best||0}층 · 오늘의 도전 기록 ${rc.dDay===today()?rc.dBest:0}층</span></p><p class="mu" style="text-align:center;line-height:1.6;font-size:12px">상위 3마리가 입장해요. 체력은 층 사이에 회복되지 않고, 층마다 갈림길(⚔️전투 · 💀엘리트 · 🛌휴식 · ✨축복)을 골라요. 전멸하면 끝이에요. 갈림길 고르기가 귀찮으면 ⚡ 자동을 누르세요 (체력이 부족하면 휴식, 여유 있으면 엘리트를 골라요).</p><div class="row"><button class="grow" ${x.tk>0?'':'disabled'} onclick="xRunStart(0)">🗼 등반 시작 (도전권 ${x.tk}/5)</button><button class="s" ${x.tk>0?'':'disabled'} onclick="xRunStart(0);xAuto()">⚡ 자동</button></div><div class="row" style="margin-top:6px"><button class="s grow" ${dd?'disabled':''} onclick="xRunStart(1)">🏆 오늘의 도전 ${dd?'(완료)':'(하루 1번 · 랭킹)'}</button><button class="s" ${dd?'disabled':''} onclick="xRunStart(1);xAuto()">⚡ 자동</button></div><button class="s" style="width:100%;margin-top:6px" onclick="xRank()">📊 오늘의 랭킹 보기</button><button class="s" style="width:100%;margin-top:6px" ${(xSl().adt||0)<5?'':'disabled'} onclick="xTad()">📺 광고 보고 도전권 +2 <span style="font-size:12px">(오늘 ${5-(xSl().adt||0)}/5)</span></button>${x.tres?`<p class="mu" style="text-align:center">${x.tres}</p>`:''}</div>
+return`<div class="card"><div class="big" style="text-align:center">🗼</div><p style="text-align:center"><b style="font-size:18px">무한의 탑</b><br><span class="mu">최고 ${rc.best||0}층 · 오늘의 도전 기록 ${rc.dDay===today()?rc.dBest:0}층</span></p><p class="mu" style="text-align:center;line-height:1.6;font-size:12px">상위 3마리가 입장해요. 체력은 층 사이에 회복되지 않고, 층마다 갈림길(⚔️전투 · 💀엘리트 · 🛌휴식 · ✨축복)을 골라요. 전멸하면 끝이에요. 10층마다 보스가 나오니 9층에서 🛌 휴식을 챙기세요. 갈림길 고르기가 귀찮으면 ⚡ 자동을 누르세요 (체력이 부족하면 휴식, 여유 있으면 엘리트를 골라요).</p><div class="row"><button class="grow" ${x.tk>0?'':'disabled'} onclick="xRunStart(0)">🗼 등반 시작 (도전권 ${x.tk}/5)</button><button class="s" ${x.tk>0?'':'disabled'} onclick="xRunStart(0);xAuto()">⚡ 자동</button></div><div class="row" style="margin-top:6px"><button class="s grow" ${dd?'disabled':''} onclick="xRunStart(1)">🏆 오늘의 도전 ${dd?'(완료)':'(하루 1번 · 랭킹)'}</button><button class="s" ${dd?'disabled':''} onclick="xRunStart(1);xAuto()">⚡ 자동</button></div><button class="s" style="width:100%;margin-top:6px" onclick="xRank()">📊 오늘의 랭킹 보기</button><button class="s" style="width:100%;margin-top:6px" ${(xSl().adt||0)<5?'':'disabled'} onclick="xTad()">📺 광고 보고 도전권 +2 <span style="font-size:12px">(오늘 ${5-(xSl().adt||0)}/5)</span></button>${x.tres?`<p class="mu" style="text-align:center">${x.tres}</p>`:''}</div>
 <div class="card"><div class="mu">🏃 자동 등반</div><p class="mu" style="font-size:12px;line-height:1.6;margin:4px 0 8px">상위 3마리의 전투력으로 4시간 동안 알아서 올라가요. 몬스터는 묶이지 않아요.${id?(dn?'':' · 남은 시간 '+Math.ceil((id.t0+XIDL*1000-now())/60000)+'분'):''}</p>${id?`<button style="width:100%" ${dn?'':'disabled'} onclick="xIdleGet()">${dn?'받기 · 예상 '+xIdF(id.P)+'층':'등반 중…'}</button>`:`<button class="s" style="width:100%" onclick="xIdleGo()">🏃 자동 등반 보내기 (4시간)</button>`}</div>`}
 function xVr(){const x=xI(),av=S.mons.filter(m=>m.st=='idle'&&m.lv<XTC),cur=av.find(m=>m.id==xsel)||av[0];
 const slots=x.tr.map((t,i)=>{if(!t)return`<div class="card"><div class="mu">훈련장 ${i+1} · 비어 있음</div><div style="margin-top:6px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px">${XTR.map((o,k)=>`<button class="s" ${cur?'':'disabled'} onclick="xTs(${i},${k})">${o.n}<br><span style="font-size:12px">Lv +${o.l}</span></button>`).join('')}</div></div>`;
@@ -706,7 +706,7 @@ return`<div class="card"><div class="mu">훈련 보낼 몬스터 (Lv.${XTC} 미�
 function xVc(){return`<div class="card"><div class="mu">현재 칭호</div><div style="font-size:20px">👑 ${xTn()}</div><div class="mu" style="margin-top:8px;font-size:12px">칭호 보유효과 합계 (해금한 칭호 전부 적용)</div><div class="row" style="flex-wrap:wrap;gap:6px;margin-top:4px">${Object.entries(xTb()).map(([k,v])=>`<span class="tag" style="background:${EL[k]?EL[k][2]:'#3a5a8c'}">${EF[k][1]} ${EF[k][0]} +${v}%</span>`).join('')}</div></div>`+XTI.map((t,i)=>{const ok=t[2](),on=xI().tit==i;return`<div class="card"><div class="row"><div class="grow"><b>${t[0]}</b><div class="mu" style="font-size:12px">${t[1]}</div><div style="font-size:12px;color:${ok?'#7dffc8':'var(--mu)'}">${EF[XTE[i][0]][1]} ${EF[XTE[i][0]][0]} +${XTE[i][1]}%${ok?'':' (해금하면 적용)'}</div></div>${on?'<span style="color:#4fd1a5">착용 중</span>':ok?`<button class="s" onclick="xTit(${i})">착용</button>`:'<span class="mu">🔒</span>'}</div></div>`}).join('')}
 function xPlay(){const nav=XT.map(t=>`<button class="s" style="flex:1;padding:6px 2px;${xpv==t[0]?'outline:2px solid var(--ac)':''}" onclick="xpv='${t[0]}';render()">${t[1]}<br>${t[2]}</button>`).join('');
 return`<h2>도전 <span class="mu" style="font-size:13px">👑 ${xTn()}</span></h2><div class="mu" style="font-size:12px;margin:0 0 8px">탑·시련·주간 보스·파견 공통 난이도 · 적 체력 ×${xDf().hp} · 보상 ×${xDf().rw}</div>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">${nav}</div>`+({q:xVq,t:xVt,r:xVr,c:xVc,s:xVs,b:xVb,w:xVw,e:xVe}[xpv]||xVq)()}
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px;font-size:12px">${nav}</div>`+({q:xVq,t:xVt,r:xVr,c:xVc,s:xVs,b:xVb,w:xVw,e:xVe,k:xVk}[xpv]||xVq)()}
 function xN(){const x=xI();let n=0;XQ.forEach(q=>{if(!x.qc[q.id]&&q.v(x)>=q.need)n++});if(!x.qa&&XQ.every(q=>x.qc[q.id]))n++;if(!xAi().done)n++;XDM.forEach((a,i)=>{if(!x.dr['m'+i]&&xDok('m'+i))n++});G.forEach((q,g)=>{if(xGd(g).tot&&!x.dr['g'+g]&&xDok('g'+g))n++});x.tr.forEach(t=>{if(t&&now()>=t.t0+t.dur*1000)n++});return n}
 /* --- 등록 --- */
 TABS.push(['play','🎯','도전']);V.play=xPlay;
@@ -852,6 +852,57 @@ return`<div class="card"><div>깬 층 합계 <b>${tot}</b> → 전투력 <b styl
 XTI.push(['주간 보스 사냥꾼','주간 보스 보상 5개 수령',()=>(xI().wbn||0)>=5],['시련의 정복자','속성 시련 총 50층 클리어',()=>xTlTot()>=50]);
 XTE.push(['f',6],['w',6]);
 const _xN=xN;xN=function(){let n=_xN();try{const w=xWb();if(w.p0)XWT.forEach(([m],i)=>{if(!w.c[i]&&w.dmg>=w.p0*m*xDf().tt)n++})}catch(e){}return n};
+</script>
+<script>
+/* ===== 추가 콘텐츠: 요일 속성 던전 · 탑 보스층 · 골드 상점 · 기록 칭호 ===== */
+XT.push(['k','🪙','골드 상점']);
+/* --- 📅 요일별 속성 던전: 오늘 요일의 속성이 나오는 층은 보상 ×2 --- */
+const XDW={0:['d'],1:['f'],2:['w'],3:['g'],4:['t'],5:['r'],6:['i','l']},XDN='일월화수목금토';
+const xDw=()=>XDW[new Date().getDay()],xDm=e=>xDw().includes(e)?2:1;
+function xDgo(){dunInit();let n=0;for(let f=S.dun.max;f>=1;f--){if(xDw().includes(dEl(f))){n=f;break}}if(!n)return toast('열려 있는 층 중에 오늘 속성 층이 없어요');dFloor(n)}
+const _vdun=V.dun;V.dun=function(){const h=_vdun();let b='';try{dunInit();const f=S.dun.floor,on=xDm(dEl(f))>1;
+b=`<div class="card" style="text-align:center">📅 <b>${XDN[new Date().getDay()]}요일</b> 속성 던전 ${xDw().map(elT).join(' ')}<div class="mu" style="font-size:12px;margin:4px 0">이 속성이 나오는 층은 오늘 보상이 ×2예요 (골드·성장석·강화석)${on?' · <b style="color:#7dffc8">지금 층에 적용 중!</b>':''}</div><button class="s" onclick="xDgo()">🌟 오늘 속성 층으로 이동</button></div>`}catch(e){}
+return h.replace('</h2>','</h2>'+b)};
+/* --- 👹 탑 보스층: 10층마다 피할 수 없는 보스 (보상 ×4 · 고급 알 · 장비 확정, 30층마다 영웅 알) --- */
+XN.k=['👹','보스','10층마다 등장 · 적 체력 ×2.4 · 보상 ×4 · 고급 알+장비 확정'];
+const XTBS=[['고블린 대장','👺'],['석상 거인','🗿'],['불꽃 드래곤','🐉'],['서리 마녀','🧙'],['심해의 괴수','🐙'],['독거미 여왕','🕷️'],['해골 왕','💀'],['폭풍의 매','🦅'],['고대의 골렘','🤖'],['탑의 지배자','👹']];
+const xTB=f=>XTBS[(Math.floor(f/10)-1)%XTBS.length];
+const _xCh=xCh;xCh=function(){_xCh();const R=xI().run;if(R&&R.f%10==0)R.ch=['k']};
+function xBoss(q){const x=xI(),R=x.run,f=R.f,pt=R.ids.map(mon).filter(Boolean);
+if(pt.length<R.ids.length){xRunEnd(1);return toast('몬스터가 없어져서 정산했어요')}
+const B=xTB(f),e=dEl(f),E=Math.floor(xTE(f)*xDf().hp*2.4*.6),h0=R.hp.slice(),Q=simR(pt,R.hp,e,E,R.buf),ti='🗼 '+f+'층 👹 '+B[0];
+if(Q.win){const k=4*xDf().rw*.8,g=Math.floor(gm(300+f*80)*k),s=Math.floor(sm(5+f*1.2)*k),o=Math.floor((2+Math.floor(f/4))*k);R.rw.g+=g;R.rw.s+=s;R.rw.o+=o;R.egg=(R.egg||0)+1;x.tbk=(x.tbk||0)+1;
+let t=B[0]+' 격파!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o+'<br>🥚 고급 알 획득!<br>'+itN(mkItem(f*5));if(f%30==0){giveEgg(null,false,'h');t+='<br>💜 영웅 알!'}
+R.f++;R.nf=0;xCh();save();if(!q)render();if(!q)battle(pt,f,e,E,1,t,Q.ev,{title:ti,emoji:B[1],big:true,hp0:h0,bx:'<button class="grow" onclick="btClose()">계속</button>'})}
+else{const t=xRunEnd(0);if(!q)battle(pt,f,e,E,0,'전멸… '+f+'층 보스 '+B[0]+'에게 쓰러졌어요<br>'+t,Q.ev,{title:ti,emoji:B[1],hp0:h0,bx:'<button class="grow" onclick="btClose()">닫기</button>'})}}
+const _xPick=xPick;xPick=function(i,q){const R=xI().run;if(R&&R.ch&&R.ch[i]=='k'){if(busy)return;return xBoss(q)}return _xPick(i,q)};
+const _xRS=xRunStart;xRunStart=function(d){const had=!!xI().run;_xRS(d);const x=xI();if(d&&!had&&x.run)x.dcn=(x.dcn||0)+1};
+/* --- 🪙 골드 상점: 골드로 강화석·성장석·알 교환 (가격은 사냥터 진행도에 맞춰 올라가고 매일 한도가 있어요) --- */
+/* [키, 이름, 기본 가격(🪙), 하루 한도] */
+const XGS=[['b','🔨 강화석 ×10',6000,5],['s','💎 성장석 ×20',5000,5],['n','🥚 일반 알',4000,10],['e','🔮 속성 알',15000,3]];
+let xgelV='f';
+const xGp=e=>Math.floor(e[2]*xS());
+function xGbuy(k){const e=XGS.find(a=>a[0]==k);if(!e)return;const c=xSl(),key='g'+k,cost=xGp(e);
+if((c[key]||0)>=e[3])return toast('오늘 구매 한도를 모두 썼어요');if(S.gold<cost)return toast('골드가 부족해요');
+S.gold-=cost;c[key]=(c[key]||0)+1;if(k=='b')S.ore+=10;else if(k=='s')S.stone+=20;else if(k=='n')giveEgg(null,0,'n');else giveEgg(xgelV,0,'e');
+const x=xI();x.gsn=(x.gsn||0)+1;save();render();toast(e[1]+' 구매!')}
+function xVk(){const c=xSl();
+const rows=XGS.map(e=>{const left=e[3]-(c['g'+e[0]]||0),cost=xGp(e);return`<div class="row" style="margin-top:8px"><div class="grow">${e[1]}${e[0]=='e'?' <span class="mu">(위에서 고른 속성)</span>':''}<div class="mu" style="font-size:12px">오늘 ${left}/${e[3]}</div></div><button class="s" ${left>0&&S.gold>=cost?'':'disabled'} onclick="xGbuy('${e[0]}')">🪙 ${nf(cost)}</button></div>`}).join('');
+return`<div class="card"><div>보유 골드 <b>🪙 ${nf(S.gold)}</b></div><div class="mu" style="font-size:12px;margin-top:4px">사냥터 ${S.st.maxS||1}단계 기준 가격이에요 (단계가 오르면 가격도 올라요)</div></div>
+<div class="card"><div class="row" style="margin-bottom:4px"><div class="grow mu">🪙 골드 교환 (매일 한도)</div><select onchange="xgelV=this.value;render()" aria-label="속성 선택">${Object.keys(EL).map(k=>`<option value="${k}" ${xgelV==k?'selected':''}>${EL[k][1]} ${EL[k][0]}</option>`).join('')}</select></div>${rows}</div>
+<p class="mu">남는 골드로 강화석·성장석·알을 바꿔요. 매일 자정에 한도가 초기화돼요.</p>`}
+/* --- 🏆 탑·시련·보스 기록 칭호 (XTI와 XTE는 같은 순서) --- */
+XTI.push(
+['고층의 등반가','무한의 탑 최고 20층',()=>Math.max((xI().rec||{}).best||0,xI().tw.b||0)>=20],
+['하늘 끝에 선 자','무한의 탑 최고 50층',()=>Math.max((xI().rec||{}).best||0,xI().tw.b||0)>=50],
+['탑 보스 사냥꾼','탑 보스 10마리 처치',()=>(xI().tbk||0)>=10],
+['오늘의 도전자','오늘의 도전 7회 참여',()=>(xI().dcn||0)>=7],
+['속성의 탐구자','속성 시련 총 100층 클리어',()=>xTlTot()>=100],
+['시련의 대가','한 속성 시련 30층 클리어',()=>Object.values(xI().el||{}).some(v=>v>=30)],
+['보스 정복자','주간 보스 보상 20개 수령',()=>(xI().wbn||0)>=20],
+['요일의 수호자','요일 속성 보너스 던전 20회 클리어',()=>(xI().dwn||0)>=20],
+['큰손','골드 상점 50회 구매',()=>(xI().gsn||0)>=50]);
+XTE.push(['f',4],['f',8],['w',5],['l',5],['g',6],['d',6],['f',6],['t',5],['l',4]);
 </script>
 <script>
 /* ===== 클라우드(Supabase) 연동 =====
