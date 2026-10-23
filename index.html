@@ -661,7 +661,7 @@ if(R.win){c.tl=(c.tl||0)+1;const r=xRpRw('e',n);S.gold+=r.g;S.stone+=r.s;S.ore+=
 save();render();const left=5-(c.tl||0);
 battle(pt,n,k,E,R.win,t,R.ev,{title:EL[k][1]+' '+EL[k][0]+' 시련 '+n+'층 (재도전)',emoji:EL[k][1],big:false,bx:left>0?`<button class="grow" onclick="btClose();xTlRe('${k}',${n})">🔄 다시 (남은 ${left}회)</button><button class="s grow" onclick="btClose();xRpOpen('e','${k}')">다른 층</button>`:'<div class="mu">오늘 시련 도전권을 모두 썼어요</div>'})}
 /* --- 🗼 무한의 탑 (개편): 연속 등반 + 갈림길 선택 + 오늘의 도전(랭킹) + 자동 등반 --- */
-const XN={b:['⚔️','전투','일반 적 · 보상 기본'],e:['💀','엘리트','적 체력 ×1.7 · 보상 ×2.5 · 35% 고급 알'],r:['🛌','휴식','전투 없음 · 파티 체력 45% 회복 (쓰러진 몬스터도)'],u:['✨','축복','전투 없음 · 이번 등반 공격력 +12% (누적)']},XIDL=14400;
+const XN={b:['⚔️','전투','일반 적 · 보상 기본'],e:['💀','엘리트','적 체력 ×1.7 · 보상 ×2.5 · 5% 고급 알'],r:['🛌','휴식','전투 없음 · 파티 체력 45% 회복 (쓰러진 몬스터도)'],u:['✨','축복','전투 없음 · 이번 등반 공격력 +12% (누적)']},XIDL=14400;
 const mb=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 function xCh(){const R=xI().run,r=R.d?mb(R.sd+R.f*7919):Math.random,a=R.nf?['b','e']:['b','e','r','u'];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}let c=a.slice(0,3);if(!c.includes('b'))c[c.length-1]='b';R.ch=c}
 function simR(pt,hp,e,E,buf){const ev=[];let eh=E;for(let r=0;r<8;r++){for(let i=0;i<pt.length;i++){if(hp[i]<=0)continue;const d=Math.max(1,Math.floor(ef(pt[i],e)*(1+buf)*.5*(.9+Math.random()*.2)));eh-=d;ev.push({a:'p',i,d,k:mulM(pt[i].sp,e),eh:Math.max(0,eh)});if(eh<=0)return{win:1,ev}}
@@ -671,7 +671,7 @@ const pt=S.mons.filter(m=>m.st!='disp').sort((a,b)=>pw(b)-pw(a)).slice(0,3);if(!
 if(d)x.rec.dDone=today();else x.tk--;
 x.run={f:1,ids:pt.map(m=>m.id),hp:pt.map(m=>mhp(m)),buf:0,rw:{g:0,s:0,o:0},egg:0,nf:0,d:d?1:0,sd:[...today()].reduce((a,c)=>(a*31+c.charCodeAt(0))|0,7)};xCh();x.tres='';save();render()}
 function xRunEnd(cash){const x=xI(),R=x.run;if(!R)return'';x.rec=x.rec||{best:0,dBest:0,dDay:'',dDone:''};const cl=Math.max(0,R.f-1),k=cash?1:.6,g=Math.floor(R.rw.g*k),s=Math.floor(R.rw.s*k),o=Math.floor(R.rw.o*k);S.gold+=g;S.stone+=s;S.ore+=o;
-let t=cl+'층까지 올랐어요!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o+(cash?'':' <span class="mu">(전멸 60%)</span>');const e=(R.egg||0)+Math.floor(cl/10);for(let i=0;i<e;i++)giveEgg(null,true);if(e)t+='<br>🥚 고급 알 ×'+e;
+let t=cl+'층까지 올랐어요!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o+(cash?'':' <span class="mu">(전멸 60%)</span>');const e=(R.egg||0)+Math.floor(cl/30);for(let i=0;i<e;i++)giveEgg(null,true);if(e)t+='<br>🥚 고급 알 ×'+e;
 for(let i=0;i<Math.min(3,Math.floor(cl/10));i++)t+='<br>'+itN(mkItem(cl*4));
 x.tw.b=Math.max(x.tw.b||0,cl);x.rec.best=Math.max(x.rec.best||0,cl);if(R.d){x.rec.dDay=today();x.rec.dBest=cl}
 x.run=null;x.tres=t.replace(/<br>/g,' · ').replace(/<[^>]+>/g,'');save();render();if(R.d)xTowerSubmit(cl);return t}
@@ -679,7 +679,7 @@ async function xTowerSubmit(n){try{if(typeof cu!='undefined'&&cu&&typeof sb!='un
 function xPick(i,q){if(busy)return;const x=xI(),R=x.run;if(!R)return;const c=R.ch[i],f=R.f,pt=R.ids.map(mon).filter(Boolean);if(!c)return;if(pt.length<R.ids.length){xRunEnd(1);return toast('몬스터가 없어져서 정산했어요')}
 if(c=='r'||c=='u'){if(c=='r')R.hp=R.hp.map((h,j)=>Math.min(mhp(pt[j]),h+mhp(pt[j])*.45));else R.buf+=.12;R.f++;R.nf=1;xCh();save();if(q)return;render();return toast(c=='r'?'🛌 파티가 쉬었어요 (+45%)':'✨ 공격력 +12%!')}
 const el=c=='e',e=dEl(f),E=Math.floor(xTE(f)*xDf().hp*(el?1.7:1)*.6),h0=R.hp.slice(),Q=simR(pt,R.hp,e,E,R.buf),ti='🗼 '+f+'층'+(el?' 💀 엘리트':'');
-if(Q.win){const k=(el?2.5:1)*xDf().rw*.8,g=Math.floor(gm(300+f*80)*k),s=Math.floor(sm(5+f*1.2)*k),o=Math.floor((2+Math.floor(f/4))*k);R.rw.g+=g;R.rw.s+=s;R.rw.o+=o;let t=f+'층 돌파!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o;if(el&&Math.random()<.35){R.egg=(R.egg||0)+1;t+='<br>🥚 고급 알 획득!'}
+if(Q.win){const k=(el?2.5:1)*xDf().rw*.8,g=Math.floor(gm(300+f*80)*k),s=Math.floor(sm(5+f*1.2)*k),o=Math.floor((2+Math.floor(f/4))*k);R.rw.g+=g;R.rw.s+=s;R.rw.o+=o;let t=f+'층 돌파!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o;if(el&&Math.random()<.05){R.egg=(R.egg||0)+1;t+='<br>🥚 고급 알 획득!'}
 R.f++;R.nf=0;xCh();save();if(!q)render();if(!q)battle(pt,f,e,E,1,t,Q.ev,{title:ti,big:el,hp0:h0,bx:'<button class="grow" onclick="btClose()">계속</button>'})}
 else{const t=xRunEnd(0);if(!q)battle(pt,f,e,E,0,'전멸… '+f+'층에서 쓰러졌어요<br>'+t,Q.ev,{title:ti,hp0:h0,bx:'<button class="grow" onclick="btClose()">닫기</button>'})}}
 function xAuto(){if(busy)return;const x=xI();let n=0;while(x.run&&n<300){n++;const R=x.run,pt=R.ids.map(mon).filter(Boolean),mx=pt.reduce((a,m)=>a+mhp(m),0),fr=R.hp.reduce((a,h)=>a+h,0)/Math.max(1,mx),dead=R.hp.some(h=>h<=0),c=R.ch,ir=c.indexOf('r'),iu=c.indexOf('u'),ie=c.indexOf('e');
@@ -863,23 +863,23 @@ function xDgo(){dunInit();let n=0;for(let f=S.dun.max;f>=1;f--){if(xDw().include
 const _vdun=V.dun;V.dun=function(){const h=_vdun();let b='';try{dunInit();const f=S.dun.floor,on=xDm(dEl(f))>1;
 b=`<div class="card" style="text-align:center">📅 <b>${XDN[new Date().getDay()]}요일</b> 속성 던전 ${xDw().map(elT).join(' ')}<div class="mu" style="font-size:12px;margin:4px 0">이 속성이 나오는 층은 오늘 보상이 ×2예요 (골드·성장석·강화석)${on?' · <b style="color:#7dffc8">지금 층에 적용 중!</b>':''}</div><button class="s" onclick="xDgo()">🌟 오늘 속성 층으로 이동</button></div>`}catch(e){}
 return h.replace('</h2>','</h2>'+b)};
-/* --- 👹 탑 보스층: 10층마다 피할 수 없는 보스 (보상 ×4 · 고급 알 · 장비 확정, 30층마다 영웅 알) --- */
-XN.k=['👹','보스','10층마다 등장 · 적 체력 ×2.4 · 보상 ×4 · 고급 알+장비 확정'];
+/* --- 👹 탑 보스층: 10층마다 피할 수 없는 보스 (보상 ×4 · 일반 알 · 장비 확정, 20층마다 속성 알, 40층마다 고급 알, 60층마다 영웅 알) --- */
+XN.k=['👹','보스','10층마다 등장 · 적 체력 ×2.4 · 보상 ×4 · 일반 알+장비 확정 (20층마다 속성 알, 40층마다 고급 알)'];
 const XTBS=[['고블린 대장','👺'],['석상 거인','🗿'],['불꽃 드래곤','🐉'],['서리 마녀','🧙'],['심해의 괴수','🐙'],['독거미 여왕','🕷️'],['해골 왕','💀'],['폭풍의 매','🦅'],['고대의 골렘','🤖'],['탑의 지배자','👹']];
 const xTB=f=>XTBS[(Math.floor(f/10)-1)%XTBS.length];
 const _xCh=xCh;xCh=function(){_xCh();const R=xI().run;if(R&&R.f%10==0)R.ch=['k']};
 function xBoss(q){const x=xI(),R=x.run,f=R.f,pt=R.ids.map(mon).filter(Boolean);
 if(pt.length<R.ids.length){xRunEnd(1);return toast('몬스터가 없어져서 정산했어요')}
 const B=xTB(f),e=dEl(f),E=Math.floor(xTE(f)*xDf().hp*2.4*.6),h0=R.hp.slice(),Q=simR(pt,R.hp,e,E,R.buf),ti='🗼 '+f+'층 👹 '+B[0];
-if(Q.win){const k=4*xDf().rw*.8,g=Math.floor(gm(300+f*80)*k),s=Math.floor(sm(5+f*1.2)*k),o=Math.floor((2+Math.floor(f/4))*k);R.rw.g+=g;R.rw.s+=s;R.rw.o+=o;R.egg=(R.egg||0)+1;x.tbk=(x.tbk||0)+1;
-let t=B[0]+' 격파!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o+'<br>🥚 고급 알 획득!<br>'+itN(mkItem(f*5));if(f%30==0){giveEgg(null,false,'h');t+='<br>💜 영웅 알!'}
+if(Q.win){const k=4*xDf().rw*.8,g=Math.floor(gm(300+f*80)*k),s=Math.floor(sm(5+f*1.2)*k),o=Math.floor((2+Math.floor(f/4))*k);R.rw.g+=g;R.rw.s+=s;R.rw.o+=o;if(f%40==0)R.egg=(R.egg||0)+1;x.tbk=(x.tbk||0)+1;giveEgg(null,0,'n');if(f%20==0)giveEgg(e);
+let t=B[0]+' 격파!<br>🪙'+nf(g)+' 💎'+nf(s)+' 🔨'+o+'<br>🥚 일반 알 획득!'+(f%20==0?'<br>🔮 '+EL[e][0]+' 속성 알 획득!':'')+(f%40==0?'<br>🌟 고급 알 획득!':'')+'<br>'+itN(mkItem(f*5));if(f%60==0){giveEgg(null,false,'h');t+='<br>💜 영웅 알!'}
 R.f++;R.nf=0;xCh();save();if(!q)render();if(!q)battle(pt,f,e,E,1,t,Q.ev,{title:ti,emoji:B[1],big:true,hp0:h0,bx:'<button class="grow" onclick="btClose()">계속</button>'})}
 else{const t=xRunEnd(0);if(!q)battle(pt,f,e,E,0,'전멸… '+f+'층 보스 '+B[0]+'에게 쓰러졌어요<br>'+t,Q.ev,{title:ti,emoji:B[1],hp0:h0,bx:'<button class="grow" onclick="btClose()">닫기</button>'})}}
 const _xPick=xPick;xPick=function(i,q){const R=xI().run;if(R&&R.ch&&R.ch[i]=='k'){if(busy)return;return xBoss(q)}return _xPick(i,q)};
 const _xRS=xRunStart;xRunStart=function(d){const had=!!xI().run;_xRS(d);const x=xI();if(d&&!had&&x.run)x.dcn=(x.dcn||0)+1};
 /* --- 🪙 골드 상점: 골드로 강화석·성장석·알 교환 (가격은 사냥터 진행도에 맞춰 올라가고 매일 한도가 있어요) --- */
 /* [키, 이름, 기본 가격(🪙), 하루 한도] */
-const XGS=[['b','🔨 강화석 ×10',6000,5],['s','💎 성장석 ×20',5000,5],['n','🥚 일반 알',4000,10],['e','🔮 속성 알',15000,3]];
+const XGS=[['b','🔨 강화석 ×10',6000,5],['s','💎 성장석 ×20',5000,5],['n','🥚 일반 알',8000,5],['e','🔮 속성 알',30000,2]];
 let xgelV='f';
 const xGp=e=>Math.floor(e[2]*xS());
 function xGbuy(k){const e=XGS.find(a=>a[0]==k);if(!e)return;const c=xSl(),key='g'+k,cost=xGp(e);
