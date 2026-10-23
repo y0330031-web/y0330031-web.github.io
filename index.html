@@ -17,7 +17,8 @@ if(/[?&]adtest=1/.test(location.search)){var _t=document.querySelector('script[s
 if(H5_ADS)adConfig({preloadAdBreaks:'on',sound:'on'});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=DotGothic16&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css" rel="stylesheet">
 <style>
 :root{--bg:#0f1b2d;--pn:#172a45;--ln:#2b4468;--tx:#e8eef7;--mu:#8fa3bf;--ac:#ffb454;--ok:#4fd1a5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}
@@ -107,6 +108,62 @@ nav button{font-size:13px}
 #toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:#fff;color:#111;padding:10px 16px;border-radius:12px;z-index:40;max-width:90%;text-align:center;display:none}
 #ad{position:fixed;inset:0;background:#000d;z-index:30;display:none;align-items:center;justify-content:center;font-size:20px;text-align:center}
 #adb{max-width:728px;margin:8px auto 76px;padding:0 10px;text-align:center;min-height:0}#adb .adl{font-size:11px;color:var(--mu);margin-bottom:2px}
+/* ===== 🕹️ 도트(픽셀) 테마: 위에 덮어씌우는 스타일이에요. 이 블록만 지우면 원래 디자인으로 돌아가요 ===== */
+:root{--bg:#1a1c2c;--pn:#333c57;--ln:#566c86;--tx:#f4f4f4;--mu:#94b0c2;--ac:#ffcd75;--ok:#a7f070;--pxk:#0b0d1a}
+*{border-radius:0!important;-webkit-font-smoothing:none;font-smooth:never}
+html,body,button,select,input{font-family:'Galmuri11','Galmuri9','DotGothic16','Jua','Apple SD Gothic Neo','Malgun Gothic',monospace}
+html{background:
+ linear-gradient(#fff,#fff) 12% 18%/3px 3px no-repeat fixed,linear-gradient(#ffcd75,#ffcd75) 78% 12%/3px 3px no-repeat fixed,
+ linear-gradient(#73eff7,#73eff7) 38% 62%/3px 3px no-repeat fixed,linear-gradient(#fff,#fff) 88% 55%/3px 3px no-repeat fixed,
+ linear-gradient(#fff,#fff) 55% 85%/3px 3px no-repeat fixed,linear-gradient(#73eff7,#73eff7) 22% 78%/3px 3px no-repeat fixed,
+ linear-gradient(#fff,#fff) 66% 35%/3px 3px no-repeat fixed,linear-gradient(#ffcd75,#ffcd75) 6% 48%/3px 3px no-repeat fixed,
+ #1a1c2c}
+h2{font-size:18px;text-shadow:2px 2px 0 var(--pxk)}
+/* 네모 테두리 + 안쪽 입체감 (모서리가 계단처럼 깎여 보여요) */
+header div,.card,.dc,.bf,.slot,#toast,#adb{background:var(--pn);box-shadow:0 -4px 0 0 var(--pxk),0 4px 0 0 var(--pxk),-4px 0 0 0 var(--pxk),4px 0 0 0 var(--pxk),inset 4px 4px 0 0 #ffffff1f,inset -4px -4px 0 0 #0000003a;border:0}
+header{background:#1a1c2cf2;backdrop-filter:none;padding:12px 4px}
+header div{background:#29366f}
+.card{margin:6px 4px 14px;padding:14px}
+.slot{background:#262b44;box-shadow:0 -4px 0 0 var(--pxk),0 4px 0 0 var(--pxk),-4px 0 0 0 var(--pxk),4px 0 0 0 var(--pxk),inset 0 0 0 4px #3b4268;border:0}
+.dc{background:#333c57}
+button{background:#ffcd75;color:#2a1400;border:0;
+ box-shadow:0 -3px 0 0 var(--pxk),0 3px 0 0 var(--pxk),-3px 0 0 0 var(--pxk),3px 0 0 0 var(--pxk),inset -3px -3px 0 0 #ef7d57,inset 3px 3px 0 0 #fff0b8;
+ margin:3px;transition:none}
+button:active:not(:disabled){transform:translateY(3px);box-shadow:0 -3px 0 0 var(--pxk),0 0 0 0 var(--pxk),-3px 0 0 0 var(--pxk),3px 0 0 0 var(--pxk),inset 3px 3px 0 0 #ef7d57,inset -3px -3px 0 0 #fff0b8}
+button.s{background:#3b5dc9;color:#f4f4f4;box-shadow:0 -3px 0 0 var(--pxk),0 3px 0 0 var(--pxk),-3px 0 0 0 var(--pxk),3px 0 0 0 var(--pxk),inset -3px -3px 0 0 #29366f,inset 3px 3px 0 0 #6d8ff0}
+button.s:active:not(:disabled){box-shadow:0 -3px 0 0 var(--pxk),0 0 0 0 var(--pxk),-3px 0 0 0 var(--pxk),3px 0 0 0 var(--pxk),inset 3px 3px 0 0 #29366f,inset -3px -3px 0 0 #6d8ff0}
+button:disabled{opacity:1;filter:grayscale(1) brightness(.6);box-shadow:0 -3px 0 0 var(--pxk),0 3px 0 0 var(--pxk),-3px 0 0 0 var(--pxk),3px 0 0 0 var(--pxk);cursor:default}
+select,input[type=text],input[type=email],input[type=password]{background:#1a1c2c;color:var(--tx);border:0;box-shadow:0 -3px 0 0 var(--pxk),0 3px 0 0 var(--pxk),-3px 0 0 0 var(--pxk),3px 0 0 0 var(--pxk),inset 3px 3px 0 0 #00000066;margin:3px}
+button:focus-visible,select:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.tag{border-radius:0;box-shadow:0 0 0 2px var(--pxk);margin:0 2px}
+/* 체력바: 칸이 나뉜 네모 막대 */
+.bar{height:12px;background:#1a1c2c;box-shadow:0 0 0 3px var(--pxk);margin:8px 3px 4px}
+.bar i{position:relative}.bar i::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 6px,#0007 6px 8px)}
+/* 아래 탭 */
+nav{background:#0b0d1a;border-top:4px solid #566c86;box-shadow:none}
+nav button{background:none;box-shadow:none;margin:0;color:var(--mu);text-shadow:none}
+nav button.on{background:#29366f;color:var(--ac);text-shadow:2px 2px 0 var(--pxk);box-shadow:inset 0 4px 0 0 var(--ac)}
+nav button:active:not(:disabled){transform:none;box-shadow:inset 0 4px 0 0 var(--ac)}
+/* 몬스터 타일·도감 */
+.tl{background:#333c57!important;border:0!important;margin:3px;box-shadow:0 -3px 0 0 var(--pxk),0 3px 0 0 var(--pxk),-3px 0 0 0 var(--pxk),3px 0 0 0 var(--pxk),inset 0 0 0 3px var(--gc,#566c86)!important}
+.tl .te,.aura .big,.egg,.pm .te,.en{filter:drop-shadow(3px 3px 0 #000a)}
+.g3,.g4,.g5{animation:pxblink 1.4s steps(2,jump-none) infinite!important}.g2{animation:none}
+@keyframes pxblink{50%{filter:brightness(1.35)}}
+.aura{background:none;box-shadow:none}
+/* 전투 화면 */
+.bf{padding:16px}
+.arena{background:linear-gradient(#1a1c2c 0 30%,#29366f 30% 52%,#3b5dc9 52% 66%,#257179 66% 72%,#38b764 72% 74%,#257179 74%);box-shadow:0 -4px 0 0 var(--pxk),0 4px 0 0 var(--pxk),-4px 0 0 0 var(--pxk),4px 0 0 0 var(--pxk)}
+.arena::after{display:none}
+.dmg{text-shadow:2px 2px 0 #000,-2px 2px 0 #000;font-size:18px}.dmg.crit{font-size:24px;text-shadow:2px 2px 0 #b13e53,-2px 2px 0 #b13e53,0 -2px 0 #000}
+.burst{border-width:6px}
+/* 움직임은 뚝뚝 끊기게 (도트 애니메이션 느낌) */
+.idle,.idle.i1,.idle.i2,.idle.i3,.idle.i4,.egg.wob,.egg.rdy{animation-timing-function:steps(4,jump-none)!important}
+.atk,.atk0,.atk1,.atk2,.atk3,.atk4,.eatk,.spw{animation-timing-function:steps(6,end)!important}
+.rise,.dmg{animation-timing-function:steps(8,end)!important}
+.mx td,.mx th{border:0}
+#toast{background:#f4f4f4;color:#1a1c2c;margin:0;padding:12px 18px;font-size:15px}
+#st,#dt,#bt,#hc,#ad{background:#0b0d1acc}
+.pxs{display:inline-block;width:1.1em;height:1.1em;image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:middle;object-fit:contain}
 </style>
 </head>
 <body>
@@ -1076,6 +1133,29 @@ document.head.appendChild(sc)}
 box.innerHTML='<div class="adl">광고</div><ins class="adsbygoogle" style="display:block" data-ad-client="'+AD_CLIENT+'" data-ad-slot="'+AD_SLOT+'" data-ad-format="auto" data-full-width-responsive="true"></ins>';
 try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}
 })();
+</script>
+<script>
+/* ===== 🕹️ 도트 스프라이트: 몬스터·알 이모지를 24×24 도트 + 외곽선으로 바꿔 그려요 =====
+   (캔버스를 쓸 수 없으면 원래 이모지가 그대로 보여요. 끄려면 아래 PXON 을 false 로) */
+(function(){const PXON=true;if(!PXON||window.__px)return;window.__px=1;
+const SEL='.te,.big,.en,.egg,.aura .big,.pm .te',N=24,cache=new Map();
+const RE=/^\s*((?:\p{Extended_Pictographic}[\uFE0F\u{1F3FB}-\u{1F3FF}]?)(?:\u200D\p{Extended_Pictographic}[\uFE0F]?)*)\s*$/u;
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+function make(e){try{
+ const big=mk(64,64),g=big.getContext('2d',{willReadFrequently:true});if(!g)return null;
+ g.font='50px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(e,32,35);
+ const sm=mk(N,N),s=sm.getContext('2d',{willReadFrequently:true});s.imageSmoothingEnabled=true;s.imageSmoothingQuality='high';s.drawImage(big,0,0,N,N);
+ const d=s.getImageData(0,0,N,N).data,W=N+2,out=mk(W,W),o=out.getContext('2d'),img=o.createImageData(W,W),sd=new Uint8Array(W*W),q=v=>Math.min(255,Math.round(v/51)*51);
+ let any=0;
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=(y*N+x)*4;if(d[i+3]>=110){const k=(y+1)*W+x+1,j=k*4;img.data[j]=q(d[i]);img.data[j+1]=q(d[i+1]);img.data[j+2]=q(d[i+2]);img.data[j+3]=255;sd[k]=1;any=1}}
+ if(!any)return null;
+ for(let y=0;y<W;y++)for(let x=0;x<W;x++){const k=y*W+x;if(sd[k])continue;if((x>0&&sd[k-1])||(x<W-1&&sd[k+1])||(y>0&&sd[k-W])||(y<W-1&&sd[k+W])){const j=k*4;img.data[j]=26;img.data[j+1]=28;img.data[j+2]=44;img.data[j+3]=255}}
+ o.putImageData(img,0,0);return out.toDataURL()}catch(err){return null}}
+const sprite=e=>{if(!cache.has(e))cache.set(e,make(e));return cache.get(e)};
+function conv(){document.querySelectorAll(SEL).forEach(el=>{Array.from(el.childNodes).forEach(n=>{if(n.nodeType!==3)return;const m=RE.exec(n.data);if(!m)return;const u=sprite(m[1]);if(!u)return;
+ const im=new Image();im.src=u;im.alt=m[1];im.className='pxs';im.draggable=false;el.replaceChild(im,n)})})}
+function start(){if(!document.body)return;conv();const ob=new MutationObserver(()=>{conv();ob.takeRecords()});ob.observe(document.body,{childList:true,subtree:true,characterData:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start()})();
 </script>
 </body>
 </html>
