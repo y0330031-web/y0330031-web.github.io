@@ -917,7 +917,6 @@ const _xTkL=xTkb;xTkb=function(k){if(k=='t'&&!xTwOpen())return xTwMsg();return _
 /* 조용히 실행하고(전투 화면 없이) 얻은 재화를 합산해요. window.xQ 가 켜져 있으면 enter/xTl/xWatk 가 화면을 열지 않아요 */
 function xQrun(fn){window.xQ={n:0,w:0,f:0,dmg:0,lose:0};const g=S.gold,s=S.stone,o=S.ore,e=S.eggs.length;try{fn()}finally{}const q=window.xQ;window.xQ=null;return{q,g:S.gold-g,s:S.stone-s,o:S.ore-o,e:S.eggs.length-e}}
 const xGn=r=>'🪙'+nf(r.g)+' 💎'+nf(r.s)+' 🔨'+nf(r.o)+(r.e>0?' 🥚'+r.e:'');
-const xKeep=()=>new Set(S.mons.slice().sort((a,b)=>pw(b)-pw(a)).slice(0,3).map(m=>m.id)); /* 도전용으로 남기는 가장 강한 3마리 */
 const xBusyIds=()=>{const r=xI().run;return new Set(r?r.ids:[])};
 /* 던전 */
 function xDunA(){dunInit();if(dRem()<=0)return '🏰 던전: 오늘 입장 횟수를 모두 썼어요';const f0=S.dun.floor;
@@ -934,15 +933,15 @@ const cl=(x.wbn||0)-n0;return r.q.n||cl?`👹 주간 보스 ${r.q.n}회 · 피�
 /* 훈련: 끝난 훈련 수령 */
 function xTrCollect(){const x=xI();let n=0;x.tr.forEach((t,i)=>{if(t&&now()>=t.t0+t.dur*1000){xTc(i);n++}});return n}
 /* 훈련: 빈 훈련장에 (가장 강한 3마리를 뺀) 등급 높은 몬스터를 가장 긴 시간으로 */
-function xTrA(){const x=xI(),c=xTrCollect(),keep=xKeep(),run=xBusyIds();let st=0;
-x.tr.forEach((t,i)=>{if(x.tr[i])return;const m=S.mons.filter(a=>a.st=='idle'&&a.lv<XTC&&!keep.has(a.id)&&!run.has(a.id)).sort((a,b)=>b.g-a.g||b.lv-a.lv)[0];if(!m)return;xsel=m.id;xTs(i,XTR.length-1);if(x.tr[i])st++});
+function xTrA(){const x=xI(),c=xTrCollect(),run=xBusyIds();let st=0;
+x.tr.forEach((t,i)=>{if(x.tr[i])return;const m=S.mons.filter(a=>a.st=='idle'&&a.lv<XTC&&!run.has(a.id)).sort((a,b)=>b.g-a.g||b.lv-a.lv)[0];if(!m)return;xsel=m.id;xTs(i,XTR.length-1);if(x.tr[i])st++});
 return `🏋️ 훈련 수령 ${c} · 배치 ${st}`}
 /* 파견: 끝난 파견 수령 */
 function xDispCollect(){const u={g:0,s:0,o:0,i:[],e:0};let n=0;S.disp=S.disp.filter(d=>{if(now()>=dEnd(d)){claim(d,u);n++;return false}return true});return {n,u}}
 /* 파견: 수령 + 남은 몬스터(가장 강한 3마리 제외)를 성공률 80% 이상인 가장 긴 파견으로 */
-function xDispA(){const e0=S.eggs.length,{n,u}=xDispCollect(),keep=xKeep(),run=xBusyIds();let sent=0;
-S.mons.filter(m=>m.st=='idle'&&!m.tr&&!keep.has(m.id)&&!run.has(m.id)).forEach(m=>{let k=0;for(let t=TR.length-1;t>=0;t--){if(dChance(m,t)>=.8){k=t;break}}dsp(m,k);sent++});
-return `🧭 파견 수령 ${n}${n?' ('+xGn({g:u.g,s:u.s,o:u.o,e:u.e})+')':''} · 새로 출발 ${sent}마리`}
+function xDispA(){const {n,u}=xDispCollect(),run=xBusyIds();let sent=0;
+S.mons.filter(m=>m.st=='idle'&&!m.tr&&!run.has(m.id)).forEach(m=>{let k=0;for(let t=TR.length-1;t>=0;t--){if(dChance(m,t)>=.8){k=t;break}}dsp(m,k);sent++});
+return `🧭 파견 수령 ${n}${n?' ('+xGn({g:u.g,s:u.s,o:u.o,e:u.e})+')':''} · 새로 출발 ${sent}마리${sent?'':' (쉬는 몬스터가 없어요)'}`}
 const xShow=m=>{save();render();toast(m)};
 function xDunAuto(){if(busy)return;xShow(xDunA())}
 function xTlAuto(){if(busy)return;xShow(xTlA())}
@@ -951,10 +950,10 @@ function xTrAuto(){xShow(xTrA())}
 function xDispAuto(){xShow(xDispA())}
 /* --- 버튼 붙이기 --- */
 
-const _xVeA=xVe;xVe=function(){return _xVeA()+`<button class="s" style="width:100%" ${(xSl().tl||0)<5?'':'disabled'} onclick="xTlAuto()">⚡ 시련 자동 (남은 횟수만큼 · 낮은 속성부터)</button>`};
+const _xVeA=xVe;xVe=function(){return `<button class="grow" style="width:100%;margin-bottom:8px" ${(xSl().tl||0)<5?'':'disabled'} onclick="xTlAuto()">⚡ 시련 자동 (남은 횟수만큼 · 낮은 속성부터)</button>`+_xVeA()};
 const _xVwA=xVw;xVw=function(){return _xVwA()+`<button class="s" style="width:100%;margin-top:8px" ${(xSl().wb||0)<3?'':'disabled'} onclick="xWbAuto()">⚡ 주간 보스 자동 (남은 횟수 + 보상 수령)</button>`};
 const _xVrA=xVr;xVr=function(){return _xVrA()+`<button class="s" style="width:100%;margin-top:8px" onclick="xTrAuto()">⚡ 훈련 자동 (수령 + 빈 훈련장에 배치)</button>`};
-const _vdispA=V.disp;V.disp=function(){const h=_vdispA();return h.replace('<h2>파견</h2>',()=>`<h2>파견</h2><button class="grow" style="width:100%;margin:0 0 4px" onclick="xDispAuto()">⚡ 자동 파견 (수령 + 가장 긴 안전한 시간으로 재파견)</button><div class="mu" style="font-size:12px;margin-bottom:8px">가장 강한 3마리는 도전용으로 남기고, 성공률 80% 이상인 가장 긴 파견을 골라요.</div>`)};
+const _vdispA=V.disp;V.disp=function(){const h=_vdispA();return h.replace('<h2>파견</h2>',()=>`<h2>파견</h2><button class="grow" style="width:100%;margin:0 0 4px" onclick="xDispAuto()">⚡ 자동 파견 (수령 + 가장 긴 안전한 시간으로 재파견)</button><div class="mu" style="font-size:12px;margin-bottom:8px">쉬는 몬스터를 모두 보내요. 몬스터마다 성공률 80% 이상인 가장 긴 파견을 골라요. (진행 중인 탑 등반 몬스터는 제외)</div>`)};
 const _vdunA=V.dun;V.dun=function(){const h=_vdunA();return h.replace('onclick="enter()">입장하기</button>',()=>'onclick="enter()">입장하기</button><button class="s" '+(dRem()>0?'':'disabled')+' onclick="xDunAuto()">⚡ 자동</button>')};
 </script>
 <script>
