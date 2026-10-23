@@ -913,7 +913,7 @@ const _xIGL=xIdleGo;xIdleGo=function(){if(!xI().idle&&!xTwOpen())return xTwMsg()
 const _xTkL=xTkb;xTkb=function(k){if(k=='t'&&!xTwOpen())return xTwMsg();return _xTkL(k)};
 </script>
 <script>
-/* ===== ⚡ 자동: 던전 · 시련 · 주간 보스 · 탑 · 훈련 · 파견 (+ 한 번에 모두 자동) ===== */
+/* ===== ⚡ 자동: 던전 · 시련 · 주간 보스 · 훈련 · 파견 ===== */
 /* 조용히 실행하고(전투 화면 없이) 얻은 재화를 합산해요. window.xQ 가 켜져 있으면 enter/xTl/xWatk 가 화면을 열지 않아요 */
 function xQrun(fn){window.xQ={n:0,w:0,f:0,dmg:0,lose:0};const g=S.gold,s=S.stone,o=S.ore,e=S.eggs.length;try{fn()}finally{}const q=window.xQ;window.xQ=null;return{q,g:S.gold-g,s:S.stone-s,o:S.ore-o,e:S.eggs.length-e}}
 const xGn=r=>'🪙'+nf(r.g)+' 💎'+nf(r.s)+' 🔨'+nf(r.o)+(r.e>0?' 🥚'+r.e:'');
@@ -931,10 +931,6 @@ return r.q.w?`🔥 시련 ${r.q.w}층 클리어 · ${xGn(r)}`:'🔥 시련: 이�
 function xWbA(){const c=xSl(),x=xI(),n0=x.wbn||0;if((c.wb||0)>=3&&!xWb().p0)return '👹 주간 보스: 오늘 도전 횟수를 모두 썼어요';
 const r=xQrun(()=>{for(let i=0;i<3&&(c.wb||0)<3;i++){const b=c.wb||0;xWatk();if((c.wb||0)==b)break}for(let i=0;i<5;i++)xWc(i)});
 const cl=(x.wbn||0)-n0;return r.q.n||cl?`👹 주간 보스 ${r.q.n}회 · 피해 ${nf(r.q.dmg)}${cl?' · 보상 '+cl+'개 수령':''}${cl?' · '+xGn(r):''}`:'👹 주간 보스: 오늘 도전 횟수를 모두 썼어요'}
-/* 무한의 탑: 도전권을 모두 쓰고 오늘의 도전도 해요 */
-function xTwA(){if(!xTwOpen())return '🗼 탑: 사냥터 '+XTWL+'단계를 돌파하면 열려요';const x=xI();if(x.run)return '🗼 탑: 이미 등반 중이에요 (탑 탭에서 이어가세요)';
-let n=0,best=0;const r=xQrun(()=>{const go=d=>{xRunStart(d);if(!x.run)return false;xAuto();if(x.run)xRunEnd(1);best=Math.max(best,x.tw.b||0);n++;return true};for(let i=0;i<8&&x.tk>0;i++)if(!go(0))break;if((x.rec||{}).dDone!==today())go(1)});
-return n?`🗼 탑 ${n}회 등반 · ${xGn(r)}`:'🗼 탑: 도전권이 없어요'}
 /* 훈련: 끝난 훈련 수령 */
 function xTrCollect(){const x=xI();let n=0;x.tr.forEach((t,i)=>{if(t&&now()>=t.t0+t.dur*1000){xTc(i);n++}});return n}
 /* 훈련: 빈 훈련장에 (가장 강한 3마리를 뺀) 등급 높은 몬스터를 가장 긴 시간으로 */
@@ -953,14 +949,8 @@ function xTlAuto(){if(busy)return;xShow(xTlA())}
 function xWbAuto(){if(busy)return;xShow(xWbA())}
 function xTrAuto(){xShow(xTrA())}
 function xDispAuto(){xShow(xDispA())}
-let xAR=null;
-/* 한 번에: 끝난 훈련·파견 수령 → 던전·시련·주간 보스·탑 → 훈련·파견 다시 보내기 */
-function xAllAuto(){if(busy)return;const L=[];xTrCollect();const dc=xDispCollect();
-L.push(xDunA(),xTlA(),xWbA(),xTwA());L.push(xTrA(),xDispA());xAR=L;save();render();toast('⚡ 모두 자동 완료')}
 /* --- 버튼 붙이기 --- */
-const _xPlayA=xPlay;xPlay=function(){let h=_xPlayA();const box=xAR?`<div class="card"><div class="row"><b class="grow">⚡ 자동 결과</b><button class="s" onclick="xAR=null;render()">닫기</button></div>${xAR.map(l=>`<div class="mu" style="margin-top:4px;font-size:13px">${l}</div>`).join('')}</div>`:'';
-const btn=`<button class="grow" style="width:100%;margin:0 0 8px" onclick="xAllAuto()">⚡ 오늘 도전·파견 모두 자동</button>`+box;
-return h.replace('<div style="display:grid;grid-template-columns:repeat(5',()=>btn+'<div style="display:grid;grid-template-columns:repeat(5')};V.play=xPlay;
+
 const _xVeA=xVe;xVe=function(){return _xVeA()+`<button class="s" style="width:100%" ${(xSl().tl||0)<5?'':'disabled'} onclick="xTlAuto()">⚡ 시련 자동 (남은 횟수만큼 · 낮은 속성부터)</button>`};
 const _xVwA=xVw;xVw=function(){return _xVwA()+`<button class="s" style="width:100%;margin-top:8px" ${(xSl().wb||0)<3?'':'disabled'} onclick="xWbAuto()">⚡ 주간 보스 자동 (남은 횟수 + 보상 수령)</button>`};
 const _xVrA=xVr;xVr=function(){return _xVrA()+`<button class="s" style="width:100%;margin-top:8px" onclick="xTrAuto()">⚡ 훈련 자동 (수령 + 빈 훈련장에 배치)</button>`};
