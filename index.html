@@ -1151,7 +1151,7 @@ function make(e){try{
  if(!any)return null;
  for(let y=0;y<W;y++)for(let x=0;x<W;x++){const k=y*W+x;if(sd[k])continue;if((x>0&&sd[k-1])||(x<W-1&&sd[k+1])||(y>0&&sd[k-W])||(y<W-1&&sd[k+W])){const j=k*4;img.data[j]=26;img.data[j+1]=28;img.data[j+2]=44;img.data[j+3]=255}}
  o.putImageData(img,0,0);return out.toDataURL()}catch(err){return null}}
-const sprite=e=>{if(!cache.has(e))cache.set(e,make(e));return cache.get(e)};
+const sprite=e=>{if(!cache.has(e))cache.set(e,(window.xMS&&window.xMS(e))||make(e));return cache.get(e)};
 function conv(){document.querySelectorAll(SEL).forEach(el=>{Array.from(el.childNodes).forEach(n=>{if(n.nodeType!==3)return;const m=RE.exec(n.data);if(!m)return;const u=sprite(m[1]);if(!u)return;
  const im=new Image();im.src=u;im.alt=m[1];im.className='pxs';im.draggable=false;el.replaceChild(im,n)})})}
 function start(){if(!document.body)return;conv();const ob=new MutationObserver(()=>{conv();ob.takeRecords()});ob.observe(document.body,{childList:true,subtree:true,characterData:true})}
@@ -1222,12 +1222,17 @@ window.evDebug=k=>{ev.cur=k==null?0:k;ev.exp=Date.now()+60000;bset()};
 /* ===== 🏡 보금자리: 성격·변이·이름 / 교배 / 부화 돌봄 / 살아있는 화면 / 이야기 ===== */
 (function(){
 const PE=[['😤','용감',1.06,'전투력 +6%',['오늘도 한판 하자!','내가 앞장설게!']],['🤪','장난꾸러기',1.03,'전투력 +3%',['잡았다~!','헤헤, 간지러워!']],['😴','느긋',1.02,'전투력 +2%',['…zZ','천천히 가도 괜찮아.']],['🥺','겁쟁이',1,'',['무, 무서워…','같이 있어 줘.']],['🧐','꼼꼼',1.04,'전투력 +4%',['빈틈없이 정리 완료!','음, 계산은 끝났어.']]];
-const ST=[['깨어난 알','숲 한가운데 빛나는 알 무더기가 있었어요. 누가, 왜 이 알들을 두고 갔을까요?',()=>1,'처음부터'],
-['첫 울음','부화한 몬스터들이 모두 같은 곳을 바라봐요. 북쪽, 높은 탑이 있는 곳이에요.',()=>S.st.hatch>=5,'알 5번 부화'],
-['사냥터의 소문','상인들이 속삭여요. 알을 낳는 건 몬스터가 아니라 탑이라고.',()=>S.st.maxS>=10,'사냥터 10단계'],
-['닮은 아이들','서로 다른 종인데 같은 무늬를 가진 아이가 있어요. 어쩌면 모두 한 뿌리일지도 몰라요.',()=>Object.keys(S.dex).length>=10,'도감 10종'],
-['두 개의 마음','두 마리가 하나로 합쳐진 날, 탑의 불빛이 한 번 깜빡였어요. 탑이 당신을 알아봤어요.',()=>(S.st.fuse||0)>=1,'교배 1회'],
-['탑의 주인','꼭대기엔 아무도 없었어요. 오래된 둥지 하나뿐. 이 보금자리는 처음부터 당신을 기다렸나 봐요.',()=>S.st.maxS>=40,'사냥터 40단계']];
+const ST=[
+['깨어난 알','숲 한가운데 빛나는 알 무더기가 있었어요. 그 곁에 지팡이를 든 노파가 앉아 중얼거렸어요. "드디어 왔구나, 둥지지기." 노파의 이름은 모모. 이 숲의 마지막 둥지를 지켜 온 사람이래요.',()=>1,'처음부터',[0,10,0]],
+['첫 울음','"알은 아무 데서나 생기지 않아." 모모가 말했어요. "북쪽 탑이 숨을 쉴 때마다 하나씩 떨어지지." 부화한 아이들은 약속이나 한 듯 모두 북쪽을 바라봐요.',()=>S.st.hatch>=5,'알 5번 부화',[3,0,0]],
+['사냥터의 소문','사냥터에서 만난 상인이 목소리를 낮췄어요. "탑이 알을 낳는다니까. 근데 요즘 숨소리가 거칠어. 예전엔 이러지 않았는데." 상인은 말을 마치고 서둘러 떠났어요.',()=>S.st.maxS>=10,'사냥터 10단계',[0,0,3]],
+['모모의 부탁','모모가 지팡이로 땅을 두드렸어요. "탑이 아픈 것 같구나. 나는 늙어서 못 간다. 네가 대신 봐 주겠니?"',()=>S.st.maxS>=15,'사냥터 15단계',null,[['"도울게요."','모모가 오래 웃었어요. "그래, 그 눈빛이다. 처음 둥지지기가 가졌던."',[0,20,0]],['"제 아이들부터 챙길게요."','모모가 고개를 끄덕였어요. "그게 둥지지기다운 대답이야. 먼저 품고, 그다음에 가렴."',[6,0,0]]]],
+['닮은 아이들','서로 다른 종인데 같은 무늬를 가진 아이들이 있어요. 모모가 도감을 넘기며 말했어요. "다 같은 뿌리에서 갈라져 나온 거란다. 탑이 처음 낳은 알, 그 하나에서."',()=>Object.keys(S.dex).length>=10,'도감 10종',[4,0,0]],
+['두 개의 마음','두 마리가 하나로 합쳐진 날, 멀리 탑의 불빛이 한 번 깜빡였어요. 모모가 중얼거렸어요. "탑이 널 알아봤구나. 합쳐진 아이는 탑의 마음을 닮아 있거든."',()=>(S.st.fuse||0)>=1,'교배 1회',[0,15,2]],
+['변이의 비밀','반짝이는 변이 아이를 본 모모의 표정이 굳었어요. "저 빛은 탑의 숨결이야. 탑이 직접 건넨 마음… 저 아이들은 널 부르고 있는 거란다."',()=>S.mons.some(m=>m.mu),'변이 몬스터 보유',[5,0,0]],
+['탑의 그림자','사냥터 깊은 곳에서 탑의 그림자가 길게 드리워졌어요. 몬스터들이 발걸음을 멈췄어요. 그림자 속에서 낮은 목소리가 들렸어요. "…돌려줘…"',()=>S.st.maxS>=30,'사냥터 30단계',[0,0,5]],
+['갈림길','탑 꼭대기에서 오래된 빈 둥지를 발견했어요. 모든 알은 여기서 떨어져 나온 거였어요. 둥지는 텅 비어 있고, 둥지 안쪽엔 작은 알 자국이 남아 있어요. 이제 어떻게 할까요?',()=>S.st.maxS>=40,'사냥터 40단계',null,[['알을 둥지에 돌려놓는다','품고 있던 알 하나를 둥지에 놓자 탑이 부드럽게 빛났어요. 탑이 숨을 고르는 소리가 들렸어요.',[0,40,0]],['둥지를 가져간다','둥지를 안고 내려오자 탑이 길게 울었어요. 그 울음엔 원망이 아니라 기다림이 섞여 있었어요.',[15,0,5]]]],
+['보금자리의 주인',()=>(S.st.sc&&S.st.sc[8]==0)?'탑은 다시 조용히 숨 쉬기 시작했어요. 모모는 웃으며 지팡이를 내려놓았어요. "이제 알은 필요한 만큼만 떨어질 거야. 이 보금자리, 이제 정말 네 거란다."':'둥지를 품은 보금자리는 한층 따뜻해졌어요. 모모가 속삭였어요. "탑은 널 용서한 게 아니야. 기다리는 거지. 언젠가 둥지를 돌려줄 날을."',()=>S.st.maxS>=50&&S.st.sc&&S.st.sc[8]!=null,'사냥터 50단계 + 갈림길 선택',[10,50,10]]];
 const css=document.createElement('style');css.textContent='#pg{position:relative;height:230px;border-radius:14px;overflow:hidden;background:linear-gradient(#27406a 0 55%,#2f6b45 55%);border:2px solid var(--ln)}.nmo{position:absolute;width:34px;text-align:center;cursor:pointer;transition:left 2.4s steps(8),top 2.4s steps(8);font-size:26px}.nmo i{position:absolute;left:50%;top:-6px;font-style:normal;font-size:12px;transform:translateX(-50%)}#pb{position:absolute;left:6px;right:6px;bottom:6px;background:#fffd;color:#111;border-radius:10px;padding:5px 8px;font-size:13px;display:none}';document.head.appendChild(css);
 const init=(m,mu)=>{m.pe=rn(PE.length);if(Math.random()<(mu||.04)){m.mu=1;m.hu=40+rn(280)}return m};
 const fix=()=>S.mons.forEach(m=>{if(m.pe==null)init(m)});
@@ -1243,7 +1248,7 @@ window.care=(i,k,b)=>{const c=S.inc[i];if(!c)return closeSet();c.cr=c.cr||{};
  else if(k==3&&b==null){return md(`<h2 style="margin-top:0">🎵 어떤 성격으로 키울까요?</h2><div style="display:grid;gap:8px">${PE.map((p,j)=>`<button class="s" onclick="care(${i},3,${j})">${p[0]} ${p[1]} ${p[3]?'· '+p[3]:''}</button>`).join('')}</div>`)}
  else if(k==3){S.stone-=2;c.cr.b=b}
  save();closeSet();render();toast('정성껏 돌봤어요!')};
-let sel=null,fa=null,fb=null;
+let sel=null,fa=null,fb=null;const fcost=g=>({g:Math.floor(20000*(1+g)*xS()),s:30+10*g,o:5});
 const idl=()=>S.mons.filter(m=>m.st=='idle'),mn=m=>(m.mu?'✨':'')+nm(m),em=m=>SP[m.sp][1];
 const hue=m=>m.mu?`filter:hue-rotate(${m.hu||90}deg) drop-shadow(0 0 4px #ffd36b)`:'';
 const lab=m=>`${em(m)} ${mn(m)} Lv${m.lv} ${G[m.g].n} ${PE[m.pe]?PE[m.pe][0]:''}`;
@@ -1251,18 +1256,25 @@ const unl=()=>ST.filter(s=>{try{return s[2]()}catch(e){return 0}}).length;
 V.nest=function(){fix();const ms=S.mons.slice(0,14),m=S.mons.find(x=>x.id==sel),id=idl();
  if(!id.some(x=>x.id==fa))fa=null;if(!id.some(x=>x.id==fb)||fb==fa)fb=null;
  const opt=(v,o)=>`<option value="">선택</option>`+id.filter(x=>x.id!=o).map(x=>`<option value="${x.id}" ${x.id==v?'selected':''}>${lab(x)}</option>`).join('');
- const A=id.find(x=>x.id==fa),Bm=id.find(x=>x.id==fb),cg=A&&Bm?Math.max(A.g,Bm.g):0,gc=1500*(1+cg),ok=A&&Bm&&S.gold>=gc&&S.stone>=5;
+ const A=id.find(x=>x.id==fa),Bm=id.find(x=>x.id==fb),cg=A&&Bm?Math.max(A.g,Bm.g):0,fc=fcost(cg),ok=A&&Bm&&A.lv>=10&&Bm.lv>=10&&S.gold>=fc.g&&S.stone>=fc.s&&S.ore>=fc.o;
  return`<div class="card"><h2 style="margin:0 0 8px">🏡 보금자리</h2><div id="pg">${ms.map((x,k)=>`<div class="nmo" data-id="${x.id}" style="left:${8+k*6%78}%;top:${12+k*13%62}%;${hue(x)}" onclick="nSay(${x.id})"><span class="te">${em(x)}</span></div>`).join('')}<div id="pb"></div></div><div class="mu" style="margin-top:6px">몬스터를 누르면 말을 걸 수 있어요. ✨는 변이 개체(전투력 +10%)예요.</div></div>
 <div class="card"><h3 style="margin:0 0 6px">🐾 내 몬스터 이름·성격</h3><select style="width:100%" onchange="sel=+this.value||null;render()"><option value="">몬스터 선택</option>${S.mons.map(x=>`<option value="${x.id}" ${x.id==sel?'selected':''}>${lab(x)}</option>`).join('')}</select>${m?`<div style="margin-top:8px">${PE[m.pe][0]} <b>${PE[m.pe][1]}</b> ${PE[m.pe][3]?'<span class="mu">('+PE[m.pe][3]+')</span>':''}${m.mu?' ✨변이':''}<button class="s" style="margin-left:8px" onclick="nName(${m.id})">이름 짓기</button></div>`:''}</div>
-<div class="card"><h3 style="margin:0 0 6px">💞 교배 (두 마리 → 새 몬스터)</h3><div class="mu" style="margin-bottom:6px">쉬는 몬스터 두 마리가 사라지고, 더 강한 새 몬스터가 태어나요. 성격은 부모에게서 물려받고 변이가 날 수 있어요.</div><div style="display:grid;gap:6px"><select onchange="nF(0,this.value)">${opt(fa,fb)}</select><select onchange="nF(1,this.value)">${opt(fb,fa)}</select><button ${ok?'':'disabled'} onclick="nFuse()">💞 합치기 (🪙 ${nf(gc)} · 💎 5)</button></div></div>
-<div class="card"><h3 style="margin:0 0 6px">📜 이야기 (${unl()}/${ST.length})</h3>${ST.map(s=>{let o=0;try{o=s[2]()}catch(e){}return o?`<div style="margin-bottom:8px"><b>${s[0]}</b><div class="mu">${s[1]}</div></div>`:`<div class="mu" style="margin-bottom:6px">🔒 조건: ${s[3]}</div>`}).join('')}</div>`};
+<div class="card"><h3 style="margin:0 0 6px">💞 교배 (두 마리 → 새 몬스터)</h3><div class="mu" style="margin-bottom:6px">쉬는 Lv.10 이상 몬스터 두 마리가 사라지고, 더 강한 새 몬스터가 태어나요. 성격은 부모에게서 물려받고 변이가 날 수 있어요.</div><div style="display:grid;gap:6px"><select onchange="nF(0,this.value)">${opt(fa,fb)}</select><select onchange="nF(1,this.value)">${opt(fb,fa)}</select><button ${ok?'':'disabled'} onclick="nFuse()">💞 합치기 (🪙 ${nf(fc.g)} · 💎 ${fc.s} · 🔨 ${fc.o})</button></div></div>
+<div class="card"><h3 style="margin:0 0 6px">📜 둥지지기 이야기 (${unl()}/${ST.length})</h3>${ST.map((s,i)=>{let o=0;try{o=s[2]()}catch(e){}const r=(S.st.sr||{})[i];return o?`<button class="s" style="width:100%;margin-bottom:6px;text-align:left" onclick="nRead(${i})">${r?'📖':'🎁'} ${i+1}. ${s[0]} ${r?'':'<span class="mu">(읽고 보상 받기)</span>'}</button>`:`<div class="mu" style="margin-bottom:6px">🔒 ${i+1}장 · 조건: ${s[3]}</div>`}).join('')}</div>`};
 TABS.push(['nest','🏡','보금자리']);
 window.sel=null;Object.defineProperty(window,'sel',{get:()=>sel,set:v=>{sel=v}});
 window.nF=(w,v)=>{(w?fb=+v||null:fa=+v||null);render()};
+const rw=(r,k)=>{const f=xS(),g=Math.floor((r[0]||0)*1000*f);S.gold+=g;S.stone+=r[1]||0;S.ore+=r[2]||0;return [g&&'🪙 '+nf(g),r[1]&&'💎 '+r[1],r[2]&&'🔨 '+r[2]].filter(Boolean).join(' ')};
+window.nRead=i=>{const c=ST[i],x=typeof c[1]=='function'?c[1]():c[1],sr=S.st.sr=S.st.sr||{},sc=S.st.sc=S.st.sc||{},ch=c[5];let t=`<h2 style="margin-top:0">📜 ${i+1}장. ${c[0]}</h2><div style="line-height:1.6;margin-bottom:10px">${x}</div>`;
+ if(ch&&sc[i]==null)t+=`<div style="display:grid;gap:8px">${ch.map((o,j)=>`<button class="s" onclick="nPick(${i},${j})">${o[0]}</button>`).join('')}</div>`;
+ else{if(ch)t+=`<div class="mu" style="margin-bottom:10px">선택: ${ch[sc[i]][0]}<br>${ch[sc[i]][1]}</div>`;t+=sr[i]||!c[4]?`<button style="width:100%" onclick="closeSet()">닫기</button>`:`<button style="width:100%" onclick="nClaim(${i})">🎁 보상 받기</button>`}
+ md(t)};
+window.nClaim=i=>{const sr=S.st.sr=S.st.sr||{};if(sr[i])return;sr[i]=1;const t=rw(ST[i][4]);save();closeSet();render();toast('보상: '+t)};
+window.nPick=(i,j)=>{const sr=S.st.sr=S.st.sr||{},sc=S.st.sc=S.st.sc||{};if(sc[i]!=null)return;sc[i]=j;sr[i]=1;const t=rw(ST[i][5][j][2]);save();render();nRead(i);toast('보상: '+t)};
 window.nName=id=>{const m=mon(id),v=prompt('이름 (8자까지)',m.nick||'');if(v==null)return;m.nick=v.trim().slice(0,8)||null;save();render()};
 window.nSay=id=>{const m=mon(id),p=PE[m.pe]||PE[0],b=document.getElementById('pb');if(!b)return;b.style.display='block';b.textContent=`${em(m)} ${mn(m)}: ${p[4][rn(p[4].length)]}`;clearTimeout(nSay.h);nSay.h=setTimeout(()=>b.style.display='none',2200)};
-window.nFuse=()=>{const a=mon(fa),b=mon(fb);if(!a||!b||a.st!='idle'||b.st!='idle')return;const mg=Math.max(a.g,b.g),c=1500*(1+mg);if(S.gold<c||S.stone<5)return toast('재료가 부족해요');
- S.gold-=c;S.stone-=5;const g=Math.min(G.length-1,mg+(Math.random()<.2?1:0)),P=Math.random()<.5?a:b,n=addMon(g,null,Math.random()<.5?a.sp:b.sp);
+window.nFuse=()=>{const a=mon(fa),b=mon(fb);if(!a||!b||a.st!='idle'||b.st!='idle')return;const mg=Math.max(a.g,b.g),c=fcost(mg);if(a.lv<10||b.lv<10)return toast('둘 다 Lv.10 이상이어야 해요');if(S.gold<c.g||S.stone<c.s||S.ore<c.o)return toast('재료가 부족해요');
+ S.gold-=c.g;S.stone-=c.s;S.ore-=c.o;const g=Math.min(G.length-1,mg+(Math.random()<.2?1:0)),P=Math.random()<.5?a:b,n=addMon(g,null,Math.random()<.5?a.sp:b.sp);
  n.pe=Math.random()<.75?P.pe:rn(PE.length);if(!n.mu&&Math.random()<((a.mu||b.mu)?.3:.1)){n.mu=1;n.hu=40+rn(280)}
  S.mons=S.mons.filter(x=>x!=a&&x!=b);S.st.fuse=(S.st.fuse||0)+1;fa=fb=null;sel=n.id;save();
  md(`<h2 style="margin-top:0">💞 새 몬스터 탄생!</h2><div style="font-size:42px;text-align:center;${hue(n)}">${em(n)}</div><div style="text-align:center;margin:8px 0">${mn(n)} · ${G[n.g].n}${g>mg?' ⬆️등급 상승!':''}<br>${PE[n.pe][0]} ${PE[n.pe][1]}${n.mu?' ✨변이':''}</div><button style="width:100%" onclick="closeSet();render()">확인</button>`)};
@@ -1270,6 +1282,43 @@ setInterval(()=>{try{if(typeof S==='undefined'||!S||!S.hunt)return;
  if(tab=='nest'){document.querySelectorAll('.nmo').forEach(e=>{if(Math.random()<.6){e.style.left=(4+Math.random()*84)+'%';e.style.top=(6+Math.random()*68)+'%'}});if(Math.random()<.25){const e=document.querySelectorAll('.nmo');if(e.length)nSay(+e[rn(e.length)].dataset.id)}}
  const u=unl();if(S.st.sty==null)S.st.sty=u;else if(u>S.st.sty){S.st.sty=u;toast('📜 새 이야기가 열렸어요! 보금자리 탭')}
 }catch(x){}},2600);
+})();
+</script>
+<script>
+/* ===== 🧬 몬스터 도트 생성기: 이모지 대신 종마다 다른 몸통·귀·눈·발을 가진 24×24 도트 몬스터 (끄려면 XMON=false) ===== */
+(function(){
+const XMON=true,NS=24;if(!XMON)return;
+const rng=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+window.xGrid=function(i){const r=rng(i*7919+13),g=Array.from({length:NS},()=>Array(NS).fill(0)),ri=(a,b)=>a+Math.floor(r()*(b-a+1)),
+ P=(x,y,v)=>{if(x<0||x>11||y<0||y>=NS)return;g[y][x]=v;g[y][23-x]=v},
+ E=(cy,rx,ry,v)=>{for(let y=0;y<NS;y++)for(let x=0;x<12;x++){const dx=11.5-x,dy=y-cy;if(dx*dx/(rx*rx)+dy*dy/(ry*ry)<=1)P(x,y,v)}};
+ const t=ri(0,3);let hcy,hrx,hry,bcy,brx,bry,feet=1;
+ if(t==0){brx=ri(6,9);bry=ri(5,8);bcy=21-bry;hcy=bcy;hrx=brx;hry=bry;E(bcy,brx,bry,1);feet=r()<.6}
+ else if(t==1){hrx=ri(5,7);hry=ri(4,5);hcy=hry+3;brx=ri(3,5);bry=ri(4,5);bcy=hcy+hry+bry-2;E(bcy,brx,bry,1);E(hcy,hrx,hry,1)}
+ else if(t==2){hrx=ri(3,4);hry=3;hcy=8;brx=ri(7,9);bry=ri(3,4);bcy=15;E(bcy,brx,bry,1);E(hcy,hrx,hry,1);feet=0;for(let k=0;k<3;k++){P(3+k*2,bcy+bry,2);P(3+k*2,bcy+bry+1,2);P(2+k*2,bcy+bry+2,2)}}
+ else{brx=ri(4,5);bry=ri(8,9);bcy=12;hcy=bcy-bry+3;hrx=brx;hry=4;E(bcy,brx,bry,1)}
+ const ht=Math.round(hcy-hry),by=Math.floor(bcy+bry);
+ for(let y=0;y<NS;y++)for(let x=0;x<12;x++)if(g[y][x]==1){if(y==0||g[y-1][x]==0)P(x,y,3);else if(y<NS-1&&g[y+1][x]==0)P(x,y,2)}
+ for(let y=0;y<NS;y++)for(let x=0;x<12;x++){const dx=11.5-x,dy=y-(bcy+(t==3?3:1));if(g[y][x]>0&&dx*dx/(brx*brx*.35)+dy*dy/(bry*bry*.35)<=1&&dy>=-1)P(x,y,7)}
+ const ex=Math.round(11.5-hrx*.7),ek=ri(0,5);
+ if(ek==1){P(ex,ht-2,6);P(ex,ht-1,6);P(ex+1,ht-1,6)}else if(ek==2){P(ex-1,ht-1,6);P(ex,ht-1,6);P(ex-1,ht,6);P(ex,ht-2,6)}
+ else if(ek==3){for(let k=1;k<=5;k++){P(ex,ht-k,6);P(ex+1,ht-k,6)}}else if(ek==4){P(ex+1,ht-1,6);P(ex+1,ht-2,6);P(ex,ht-3,6)}
+ else if(ek==5){P(ex+2,ht-1,6);P(ex+2,ht-2,6);P(ex+1,ht-3,6);P(ex+1,ht-4,6);P(ex+1,ht-5,6)}
+ if(t!=2&&r()<.45){const wx=Math.round(11.5-brx)-1,wy=Math.round(bcy-bry*.5);for(let k=0;k<4;k++)for(let j=0;j<4-k;j++)P(wx-j,wy+k,6)}
+ else if((t==1||t==3)&&r()<.8){const ax=Math.round(11.5-brx)-1,ay=Math.round(bcy-bry*.4);P(ax,ay,1);P(ax,ay+1,1);P(ax-1,ay+2,1)}
+ if(feet){const fx=Math.round(11.5-brx*.5)-1;for(const[a,b]of[[0,-1],[1,-1],[0,0],[1,0],[0,1],[1,1]])P(fx+a,by+b,2)}
+ for(let k=0;k<3;k++){const x=ri(3,9),y=ri(Math.round(bcy-bry+2),Math.round(bcy+bry-1));if(g[y]&&g[y][x]==1)P(x,y,2)}
+ const ey=Math.round(hcy-1),ne=ri(1,3),ex2=Math.round(11.5-hrx*.45);
+ if(ne==1){P(11,ey,4);P(11,ey+1,5)}else{P(ex2,ey,4);P(ex2-1,ey,4);P(ex2-1,ey+1,4);P(ex2,ey+1,5);if(ne==3&&hry>=4){P(11,ey-2,4);P(11,ey-1,5)}}
+ const mk=ri(0,2),my=ey+3;if(mk==1){P(11,my,5);P(10,my,5)}else if(mk==2){P(11,my,5);P(10,my+1,4)}
+ return g};
+const EM={},pal=i=>{const r=rng(i*31+7),h=(i*137.508)%360,s=50+r()*30,h2=(h+60+r()*120)%360;return[0,`hsl(${h},${s}%,52%)`,`hsl(${h},${s}%,34%)`,`hsl(${h},${s}%,68%)`,'#fff','#1a1c2c',`hsl(${h2},70%,55%)`,`hsl(${h},38%,84%)`,'#1a1c2c']};
+window.xMS=function(e){try{if(!window.SP)return null;if(!EM.k){SP.forEach((s,i)=>{EM[s[1]]=i});EM.k=1}
+ const i=EM[e];if(i==null)return null;const c=document.createElement('canvas');c.width=c.height=NS+2;const x=c.getContext('2d');if(!x)return null;
+ const g=xGrid(i),p=pal(i),W=NS+2,q=Array.from({length:W},()=>Array(W).fill(0));
+ for(let y=0;y<NS;y++)for(let a=0;a<NS;a++)q[y+1][a+1]=g[y][a];
+ for(let y=0;y<W;y++)for(let a=0;a<W;a++)if(!q[y][a]&&[[0,1],[0,-1],[1,0],[-1,0]].some(d=>(q[y+d[0]]||[])[a+d[1]]>0&&(q[y+d[0]]||[])[a+d[1]]<8))q[y][a]=8;
+ q.forEach((row,y)=>row.forEach((v,a)=>{if(v){x.fillStyle=p[v];x.fillRect(a,y,1,1)}}));return c.toDataURL()}catch(err){return null}};
 })();
 </script>
 </body>
