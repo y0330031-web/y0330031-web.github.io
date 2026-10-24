@@ -309,7 +309,7 @@ S.st.kills++;if(boss)S.st.boss++;S.st.maxS=Math.max(S.st.maxS,s);al.forEach(m=>{
 if(boss||Math.random()<.02){const i=mkItem(s);lg('🎁 '+itN(i)+' 획득')}
 if(Math.random()<(boss?.03:.0012)*(1+BN.d/100)){const eg=giveEgg(Math.random()<.5?he:null);lg('🥚 '+(eg.el?EL[eg.el][0]+' 속성 ':'')+'알 발견!')}
 if(boss)lg('👑 '+s+'단계 보스 처치');if(H.hold||(!boss&&(H.lock||(s+1)%10==0))){}else{H.s++;H.lock=0}H.hp=null}
-function catchUp(){const el=Math.min(7200,Math.floor((now()-S.hunt.last)/1000));if(el<=0)return;const b={g:S.gold,s:S.stone,e:S.eggs.length,i:S.items.length};for(let k=0;k<el;k++)step();S.hunt.last=now();
+function catchUp(){const el=Math.min(54000,Math.floor((now()-S.hunt.last)/1000));if(el<=0)return;const b={g:S.gold,s:S.stone,e:S.eggs.length,i:S.items.length};for(let k=0;k<el;k++)step();S.hunt.last=now();
 if(el>=30)toast(`방치 ${fmt(el)}: 골드 +${S.gold-b.g}, 성장석 +${S.stone-b.s}, 장비 +${S.items.length-b.i}, 알 +${S.eggs.length-b.e}`)}
 // 부화
 function putEgg(i,key){if(!S.eggs.length)return;const ks=[...new Set(S.eggs.map(eKey))];
