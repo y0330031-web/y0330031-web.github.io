@@ -1008,8 +1008,8 @@ function xDispAuto(){xShow(xDispA())}
 /* --- 버튼 붙이기 --- */
 
 const _xVeA=xVe;xVe=function(){return `<button class="grow" style="width:100%;margin-bottom:8px" ${(xSl().tl||0)<5?'':'disabled'} onclick="xTlAuto()">⚡ 시련 자동 (남은 횟수만큼 · 낮은 속성부터)</button>`+_xVeA()};
-const _xVwA=xVw;xVw=function(){return _xVwA()+`<button class="s" style="width:100%;margin-top:8px" ${(xSl().wb||0)<3?'':'disabled'} onclick="xWbAuto()">⚡ 주간 보스 자동 (남은 횟수 + 보상 수령)</button>`};
-const _xVrA=xVr;xVr=function(){return _xVrA()+`<button class="s" style="width:100%;margin-top:8px" onclick="xTrAuto()">⚡ 훈련 자동 (수령 + 빈 훈련장에 배치)</button>`};
+const _xVwA=xVw;xVw=function(){return `<button class="grow" style="width:100%;margin-bottom:8px" ${(xSl().wb||0)<3?'':'disabled'} onclick="xWbAuto()">⚡ 주간 보스 자동 (남은 횟수 + 보상 수령)</button>`+_xVwA()};
+const _xVrA=xVr;xVr=function(){return `<button class="grow" style="width:100%;margin-bottom:8px" onclick="xTrAuto()">⚡ 훈련 자동 (수령 + 빈 훈련장에 배치)</button>`+_xVrA()};
 const _vdispA=V.disp;V.disp=function(){const h=_vdispA();return h.replace('<h2>파견</h2>',()=>`<h2>파견</h2><button class="grow" style="width:100%;margin:0 0 4px" onclick="xDispAuto()">⚡ 자동 파견 (수령 + 가장 긴 안전한 시간으로 재파견)</button><div class="mu" style="font-size:12px;margin-bottom:8px">쉬는 몬스터를 모두 보내요. 몬스터마다 성공률 80% 이상인 가장 긴 파견을 골라요. (진행 중인 탑 등반 몬스터는 제외)</div>`)};
 const _vdunA=V.dun;V.dun=function(){const h=_vdunA();return h.replace('onclick="enter()">입장하기</button>',()=>'onclick="enter()">입장하기</button><button class="s" '+(dRem()>0?'':'disabled')+' onclick="xDunAuto()">⚡ 자동</button>')};
 </script>
