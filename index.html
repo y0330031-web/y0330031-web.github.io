@@ -276,7 +276,7 @@ const lg=t=>{S.log.unshift(t);S.log.length=Math.min(S.log.length,6)};
 const mon=id=>S.mons.find(m=>m.id==id);
 const eqPw=()=>EQP;
 const RLS=[['⚖️','균형형',1,1,1,'능력치가 균형 잡혀 있어요'],['🗡️','공격형',1.2,.8,1,'전투력 +20% · 체력 -20%'],['🛡️','방어형',.85,1.4,1,'전투력 -15% · 체력 +40%'],['💚','재생형',.95,1.1,2.5,'전투력 -5% · 체력 +10% · 체력 회복 2.5배']],RL=sp=>RLS[(sp+(sp>>2))%4];
-const pw=m=>Math.floor((10+m.lv*6+eqPw(m))*G[m.g].m*(1+BN.f/100)*(1+ha(m.sp,0)/100)*RL(m.sp)[2]);
+const pw=m=>Math.floor((10+m.lv*6+eqPw(m))*G[m.g].m*(1+BN.f/100)*(1+ha(m.sp,0)/100)*RL(m.sp)[2]*(typeof xPm=='function'?xPm(m):1));
 const TIERS=[3,7,15],TYN=['강타','철벽','증폭','탐욕','연성','원정'],HV=[[0,15,30,60],[0,25,50,100],[1,1.5,2,3],[0,3,6,12],[0,5,10,20],[0,3,6,12]];
 const hty=sp=>(sp*7+3)%6,tierN=n=>n>=15?3:n>=7?2:n>=3?1:0,htier=sp=>tierN(S.dex[sp]||0),ha=(sp,t)=>hty(sp)==t?HV[t][htier(sp)]:(t==2?1:0);
 const hDesc=(ty,v)=>['이 종 전투력 +'+v+'%','이 종 체력 +'+v+'%','보유효과 ×'+v,'골드 획득 +'+v+'%','알 발견률 +'+v+'%','파견 보상 +'+v+'%'][ty];
@@ -288,7 +288,7 @@ function refreshBn(){const b={f:0,w:0,g:0,l:0,d:0,t:0,r:0,i:0},best={};S.mons.fo
 const effLine=m=>{const k=ELM[m.sp],v=effV(m.sp,m.lv),n=m.lv<80?effV(m.sp,m.lv+1):v;return`${EF[k][1]} 보유효과 <b>${EF[k][0]} +${v}%</b> <span class="mu">(다음 레벨 +${n}%)</span>${EL2[m.sp]?`<br>${EF[EL2[m.sp]][1]} 보조 효과 <b>${EF[EL2[m.sp]][0]} +${Math.floor(v/2)}%</b>`:''}`};
 const gm=x=>Math.floor(x*(1+BN.l/100)),sm=x=>{const v=x*(1+BN.g/100);return Math.floor(v)+(Math.random()<v%1?1:0)};
 const nf=n=>{n=Math.floor(n||0);if(n<10000)return n.toLocaleString();const U=[['조',1e12],['억',1e8],['만',1e4]];for(const[u,d]of U)if(n>=d){const v=n/d;return(v>=100?Math.floor(v):v>=10?Math.floor(v*10)/10:Math.floor(v*100)/100)+u}};
-const nm=m=>SP[m.sp][0];
+const nm=m=>m.nick||SP[m.sp][0];
 const mhp=m=>Math.floor(pw(m)*4*(1+BN.w/100)*(1+ha(m.sp,1)/100)*RL(m.sp)[3]/RL(m.sp)[2]);
 const tagH=g=>`<span class="tag" style="background:${G[g].c}">${G[g].n}</span>`;
 function addMon(g,el,sp0){const m={id:S.nid++,sp:sp0!=null?sp0:pickSp(g,el),g,lv:1,st:'idle'};S.mons.push(m);S.dex[m.sp]=(S.dex[m.sp]||0)+1;return m}
@@ -511,7 +511,7 @@ document.getElementById('nv').innerHTML=TABS.map(t=>`<button class="${t[0]==tab?
 document.getElementById('main').innerHTML=V[tab]();shownS=S.hunt.s;det()}
 function done(){return S.inc.filter(c=>c&&now()>=c.t0+c.dur*1000).length+S.disp.filter(d=>d&&now()>=dEnd(d)).length}
 let tk=0;
-function tick(){catchUp();const c=done(),ae=document.activeElement,busy=!!(ae&&/^(SELECT|INPUT|TEXTAREA)$/.test(ae.tagName)&&ae.closest&&ae.closest('#main'));if(!busy&&((tab!='disp'&&tab!='mons'&&tab!='dex'&&tab!='hunt'&&tab!='ach')||c!=lastC))render();else{document.querySelectorAll('[data-end]').forEach(e=>e.textContent=fmt(Math.max(0,Math.ceil((+e.dataset.end-now())/1000))));const d=document.querySelectorAll('#hd div');if(d.length==4){d[0].textContent='🪙 '+nf(S.gold);d[1].textContent='💎 '+nf(S.stone);d[2].textContent='🥚 '+S.eggs.length;d[3].textContent='🔨 '+nf(S.ore)}if(tab=='hunt')huntUpd()}if(!busy)lastC=c;const ac=achCount();if(ac>lastAch)toast('🏆 새 업적을 달성했어요! 업적 탭에서 받아 가세요');if(ac!=lastAch){const nb=document.querySelectorAll('#nv button');if(nb.length==TABS.length)nb[6].innerHTML='🏆'+(ac?'🔴':'')+'<br>업적'}lastAch=ac;if(++tk%5==0)save()}
+function tick(){catchUp();const c=done(),ae=document.activeElement,busy=!!(ae&&/^(SELECT|INPUT|TEXTAREA)$/.test(ae.tagName)&&ae.closest&&ae.closest('#main'));if(!busy&&((tab!='disp'&&tab!='mons'&&tab!='dex'&&tab!='hunt'&&tab!='ach'&&tab!='nest')||c!=lastC))render();else{document.querySelectorAll('[data-end]').forEach(e=>e.textContent=fmt(Math.max(0,Math.ceil((+e.dataset.end-now())/1000))));const d=document.querySelectorAll('#hd div');if(d.length==4){d[0].textContent='🪙 '+nf(S.gold);d[1].textContent='💎 '+nf(S.stone);d[2].textContent='🥚 '+S.eggs.length;d[3].textContent='🔨 '+nf(S.ore)}if(tab=='hunt')huntUpd()}if(!busy)lastC=c;const ac=achCount();if(ac>lastAch)toast('🏆 새 업적을 달성했어요! 업적 탭에서 받아 가세요');if(ac!=lastAch){const nb=document.querySelectorAll('#nv button');if(nb.length==TABS.length)nb[6].innerHTML='🏆'+(ac?'🔴':'')+'<br>업적'}lastAch=ac;if(++tk%5==0)save()}
 const applyMo=()=>document.body.classList.toggle('mo',!S.boss||S.boss.mo!==false);
 const applyTitle=()=>{document.title=S.boss.title?(S.boss.ttext||'업무 문서'):'알 부화 몬스터 키우기'};
 function det(){const e=document.getElementById('dt'),m=sel&&mon(sel);
@@ -1216,6 +1216,60 @@ setInterval(()=>{try{
  ev.last=k;ev.cur=k;ev.exp=Date.now()+60000;bset();
 }catch(x){}},1000);
 window.evDebug=k=>{ev.cur=k==null?0:k;ev.exp=Date.now()+60000;bset()};
+})();
+</script>
+<script>
+/* ===== 🏡 보금자리: 성격·변이·이름 / 교배 / 부화 돌봄 / 살아있는 화면 / 이야기 ===== */
+(function(){
+const PE=[['😤','용감',1.06,'전투력 +6%',['오늘도 한판 하자!','내가 앞장설게!']],['🤪','장난꾸러기',1.03,'전투력 +3%',['잡았다~!','헤헤, 간지러워!']],['😴','느긋',1.02,'전투력 +2%',['…zZ','천천히 가도 괜찮아.']],['🥺','겁쟁이',1,'',['무, 무서워…','같이 있어 줘.']],['🧐','꼼꼼',1.04,'전투력 +4%',['빈틈없이 정리 완료!','음, 계산은 끝났어.']]];
+const ST=[['깨어난 알','숲 한가운데 빛나는 알 무더기가 있었어요. 누가, 왜 이 알들을 두고 갔을까요?',()=>1,'처음부터'],
+['첫 울음','부화한 몬스터들이 모두 같은 곳을 바라봐요. 북쪽, 높은 탑이 있는 곳이에요.',()=>S.st.hatch>=5,'알 5번 부화'],
+['사냥터의 소문','상인들이 속삭여요. 알을 낳는 건 몬스터가 아니라 탑이라고.',()=>S.st.maxS>=10,'사냥터 10단계'],
+['닮은 아이들','서로 다른 종인데 같은 무늬를 가진 아이가 있어요. 어쩌면 모두 한 뿌리일지도 몰라요.',()=>Object.keys(S.dex).length>=10,'도감 10종'],
+['두 개의 마음','두 마리가 하나로 합쳐진 날, 탑의 불빛이 한 번 깜빡였어요. 탑이 당신을 알아봤어요.',()=>(S.st.fuse||0)>=1,'교배 1회'],
+['탑의 주인','꼭대기엔 아무도 없었어요. 오래된 둥지 하나뿐. 이 보금자리는 처음부터 당신을 기다렸나 봐요.',()=>S.st.maxS>=40,'사냥터 40단계']];
+const css=document.createElement('style');css.textContent='#pg{position:relative;height:230px;border-radius:14px;overflow:hidden;background:linear-gradient(#27406a 0 55%,#2f6b45 55%);border:2px solid var(--ln)}.nmo{position:absolute;width:34px;text-align:center;cursor:pointer;transition:left 2.4s steps(8),top 2.4s steps(8);font-size:26px}.nmo i{position:absolute;left:50%;top:-6px;font-style:normal;font-size:12px;transform:translateX(-50%)}#pb{position:absolute;left:6px;right:6px;bottom:6px;background:#fffd;color:#111;border-radius:10px;padding:5px 8px;font-size:13px;display:none}';document.head.appendChild(css);
+const init=(m,mu)=>{m.pe=rn(PE.length);if(Math.random()<(mu||.04)){m.mu=1;m.hu=40+rn(280)}return m};
+const fix=()=>S.mons.forEach(m=>{if(m.pe==null)init(m)});
+window.xPm=m=>(PE[m.pe]?PE[m.pe][2]:1)*(m.mu?1.1:1);
+const _am=addMon;addMon=function(...a){return init(_am(...a))};
+const _hc=hatchCore;hatchCore=function(i){const c=S.inc[i],r=_hc(i);if(c&&c.cr&&r.m&&r.m.id){if(c.cr.b!=null)r.m.pe=c.cr.b;if(c.cr.mu&&!r.m.mu&&Math.random()<.15){r.m.mu=1;r.m.hu=40+rn(280)}}return r};
+const md=h=>{const o=document.getElementById('st');o.style.display='flex';o.innerHTML=`<div class="card" style="width:min(92%,380px)">${h}</div>`};
+const _pe=putEgg;putEgg=function(i,k){const had=S.inc[i];_pe(i,k);const c=S.inc[i];if(!had&&c&&!c.cr)setTimeout(()=>careAsk(i),0)};
+window.careAsk=i=>{if(!S.inc[i])return;md(`<h2 style="margin-top:0">🥚 어떻게 품어 줄까요?</h2><div style="display:grid;gap:8px"><button class="s" onclick="care(${i},1)">🔥 따뜻하게 (부화 시간 -20%)</button><button class="s" ${S.stone>=3?'':'disabled'} onclick="care(${i},2)">💎 성장석 3개 얹기 (변이 확률 ↑)</button><button class="s" ${S.stone>=2?'':'disabled'} onclick="care(${i},3)">🎵 성격 고르기 (💎 2개)</button><button onclick="closeSet()">그냥 둔다</button></div>`)};
+window.care=(i,k,b)=>{const c=S.inc[i];if(!c)return closeSet();c.cr=c.cr||{};
+ if(k==1){c.dur=Math.floor(c.dur*.8);c.cr.w=1}
+ else if(k==2){S.stone-=3;c.cr.mu=1}
+ else if(k==3&&b==null){return md(`<h2 style="margin-top:0">🎵 어떤 성격으로 키울까요?</h2><div style="display:grid;gap:8px">${PE.map((p,j)=>`<button class="s" onclick="care(${i},3,${j})">${p[0]} ${p[1]} ${p[3]?'· '+p[3]:''}</button>`).join('')}</div>`)}
+ else if(k==3){S.stone-=2;c.cr.b=b}
+ save();closeSet();render();toast('정성껏 돌봤어요!')};
+let sel=null,fa=null,fb=null;
+const idl=()=>S.mons.filter(m=>m.st=='idle'),mn=m=>(m.mu?'✨':'')+nm(m),em=m=>SP[m.sp][1];
+const hue=m=>m.mu?`filter:hue-rotate(${m.hu||90}deg) drop-shadow(0 0 4px #ffd36b)`:'';
+const lab=m=>`${em(m)} ${mn(m)} Lv${m.lv} ${G[m.g].n} ${PE[m.pe]?PE[m.pe][0]:''}`;
+const unl=()=>ST.filter(s=>{try{return s[2]()}catch(e){return 0}}).length;
+V.nest=function(){fix();const ms=S.mons.slice(0,14),m=S.mons.find(x=>x.id==sel),id=idl();
+ if(!id.some(x=>x.id==fa))fa=null;if(!id.some(x=>x.id==fb)||fb==fa)fb=null;
+ const opt=(v,o)=>`<option value="">선택</option>`+id.filter(x=>x.id!=o).map(x=>`<option value="${x.id}" ${x.id==v?'selected':''}>${lab(x)}</option>`).join('');
+ const A=id.find(x=>x.id==fa),Bm=id.find(x=>x.id==fb),cg=A&&Bm?Math.max(A.g,Bm.g):0,gc=1500*(1+cg),ok=A&&Bm&&S.gold>=gc&&S.stone>=5;
+ return`<div class="card"><h2 style="margin:0 0 8px">🏡 보금자리</h2><div id="pg">${ms.map((x,k)=>`<div class="nmo" data-id="${x.id}" style="left:${8+k*6%78}%;top:${12+k*13%62}%;${hue(x)}" onclick="nSay(${x.id})"><span class="te">${em(x)}</span></div>`).join('')}<div id="pb"></div></div><div class="mu" style="margin-top:6px">몬스터를 누르면 말을 걸 수 있어요. ✨는 변이 개체(전투력 +10%)예요.</div></div>
+<div class="card"><h3 style="margin:0 0 6px">🐾 내 몬스터 이름·성격</h3><select style="width:100%" onchange="sel=+this.value||null;render()"><option value="">몬스터 선택</option>${S.mons.map(x=>`<option value="${x.id}" ${x.id==sel?'selected':''}>${lab(x)}</option>`).join('')}</select>${m?`<div style="margin-top:8px">${PE[m.pe][0]} <b>${PE[m.pe][1]}</b> ${PE[m.pe][3]?'<span class="mu">('+PE[m.pe][3]+')</span>':''}${m.mu?' ✨변이':''}<button class="s" style="margin-left:8px" onclick="nName(${m.id})">이름 짓기</button></div>`:''}</div>
+<div class="card"><h3 style="margin:0 0 6px">💞 교배 (두 마리 → 새 몬스터)</h3><div class="mu" style="margin-bottom:6px">쉬는 몬스터 두 마리가 사라지고, 더 강한 새 몬스터가 태어나요. 성격은 부모에게서 물려받고 변이가 날 수 있어요.</div><div style="display:grid;gap:6px"><select onchange="nF(0,this.value)">${opt(fa,fb)}</select><select onchange="nF(1,this.value)">${opt(fb,fa)}</select><button ${ok?'':'disabled'} onclick="nFuse()">💞 합치기 (🪙 ${nf(gc)} · 💎 5)</button></div></div>
+<div class="card"><h3 style="margin:0 0 6px">📜 이야기 (${unl()}/${ST.length})</h3>${ST.map(s=>{let o=0;try{o=s[2]()}catch(e){}return o?`<div style="margin-bottom:8px"><b>${s[0]}</b><div class="mu">${s[1]}</div></div>`:`<div class="mu" style="margin-bottom:6px">🔒 조건: ${s[3]}</div>`}).join('')}</div>`};
+TABS.push(['nest','🏡','보금자리']);
+window.sel=null;Object.defineProperty(window,'sel',{get:()=>sel,set:v=>{sel=v}});
+window.nF=(w,v)=>{(w?fb=+v||null:fa=+v||null);render()};
+window.nName=id=>{const m=mon(id),v=prompt('이름 (8자까지)',m.nick||'');if(v==null)return;m.nick=v.trim().slice(0,8)||null;save();render()};
+window.nSay=id=>{const m=mon(id),p=PE[m.pe]||PE[0],b=document.getElementById('pb');if(!b)return;b.style.display='block';b.textContent=`${em(m)} ${mn(m)}: ${p[4][rn(p[4].length)]}`;clearTimeout(nSay.h);nSay.h=setTimeout(()=>b.style.display='none',2200)};
+window.nFuse=()=>{const a=mon(fa),b=mon(fb);if(!a||!b||a.st!='idle'||b.st!='idle')return;const mg=Math.max(a.g,b.g),c=1500*(1+mg);if(S.gold<c||S.stone<5)return toast('재료가 부족해요');
+ S.gold-=c;S.stone-=5;const g=Math.min(G.length-1,mg+(Math.random()<.2?1:0)),P=Math.random()<.5?a:b,n=addMon(g,null,Math.random()<.5?a.sp:b.sp);
+ n.pe=Math.random()<.75?P.pe:rn(PE.length);if(!n.mu&&Math.random()<((a.mu||b.mu)?.3:.1)){n.mu=1;n.hu=40+rn(280)}
+ S.mons=S.mons.filter(x=>x!=a&&x!=b);S.st.fuse=(S.st.fuse||0)+1;fa=fb=null;sel=n.id;save();
+ md(`<h2 style="margin-top:0">💞 새 몬스터 탄생!</h2><div style="font-size:42px;text-align:center;${hue(n)}">${em(n)}</div><div style="text-align:center;margin:8px 0">${mn(n)} · ${G[n.g].n}${g>mg?' ⬆️등급 상승!':''}<br>${PE[n.pe][0]} ${PE[n.pe][1]}${n.mu?' ✨변이':''}</div><button style="width:100%" onclick="closeSet();render()">확인</button>`)};
+setInterval(()=>{try{if(typeof S==='undefined'||!S||!S.hunt)return;
+ if(tab=='nest'){document.querySelectorAll('.nmo').forEach(e=>{if(Math.random()<.6){e.style.left=(4+Math.random()*84)+'%';e.style.top=(6+Math.random()*68)+'%'}});if(Math.random()<.25){const e=document.querySelectorAll('.nmo');if(e.length)nSay(+e[rn(e.length)].dataset.id)}}
+ const u=unl();if(S.st.sty==null)S.st.sty=u;else if(u>S.st.sty){S.st.sty=u;toast('📜 새 이야기가 열렸어요! 보금자리 탭')}
+}catch(x){}},2600);
 })();
 </script>
 </body>
