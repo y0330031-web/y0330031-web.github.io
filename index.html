@@ -936,18 +936,18 @@ const _xPick=xPick;xPick=function(i,q){const R=xI().run;if(R&&R.ch&&R.ch[i]=='k'
 const _xRS=xRunStart;xRunStart=function(d){const had=!!xI().run;_xRS(d);const x=xI();if(d&&!had&&x.run)x.dcn=(x.dcn||0)+1};
 /* --- 🪙 골드 상점: 골드로 강화석·성장석·알 교환 (가격은 사냥터 진행도에 맞춰 올라가고 매일 한도가 있어요) --- */
 /* [키, 이름, 기본 가격(🪙), 하루 한도] */
-const XGS=[['b','🔨 강화석 ×10',6000,5],['s','💎 성장석 ×20',5000,5],['n','🥚 일반 알',8000,5],['e','🔮 속성 알',30000,2]];
+const XGS=[['b','🔨 강화석 ×10',6000,5],['s','💎 성장석 ×20',5000,5]];
 let xgelV='f';
-const xGp=e=>{const q=e[0]=='n'||e[0]=='e'?SHOP.find(x=>x.k==e[0]):null;return q?q.pr:Math.floor(e[2]*xS())};
+const xGp=e=>Math.floor(e[2]*xS());
 function xGbuy(k){const e=XGS.find(a=>a[0]==k);if(!e)return;const c=xSl(),key='g'+k,cost=xGp(e);
 if((c[key]||0)>=e[3])return toast('오늘 구매 한도를 모두 썼어요');if(S.gold<cost)return toast('골드가 부족해요');
-S.gold-=cost;c[key]=(c[key]||0)+1;if(k=='b')S.ore+=10;else if(k=='s')S.stone+=20;else if(k=='n')giveEgg(null,0,'n');else giveEgg(xgelV,0,'e');
+S.gold-=cost;c[key]=(c[key]||0)+1;if(k=='b')S.ore+=10;else S.stone+=20;
 const x=xI();x.gsn=(x.gsn||0)+1;save();render();toast(e[1]+' 구매!')}
 function xVk(){const c=xSl();
-const rows=XGS.map(e=>{const left=e[3]-(c['g'+e[0]]||0),cost=xGp(e);return`<div class="row" style="margin-top:8px"><div class="grow">${e[1]}${e[0]=='e'?' <span class="mu">(위에서 고른 속성)</span>':''}<div class="mu" style="font-size:12px">오늘 ${left}/${e[3]}</div></div><button class="s" ${left>0&&S.gold>=cost?'':'disabled'} onclick="xGbuy('${e[0]}')">🪙 ${nf(cost)}</button></div>`}).join('');
-return`<div class="card"><div>보유 골드 <b>🪙 ${nf(S.gold)}</b></div><div class="mu" style="font-size:12px;margin-top:4px">강화석·성장석은 사냥터 ${S.st.maxS||1}단계 기준 가격이에요 (단계가 오르면 올라요). 알은 알 상점과 같은 가격이에요.</div></div>
-<div class="card"><div class="row" style="margin-bottom:4px"><div class="grow mu">🪙 골드 교환 (매일 한도)</div><select onchange="xgelV=this.value;render()" aria-label="속성 선택">${Object.keys(EL).map(k=>`<option value="${k}" ${xgelV==k?'selected':''}>${EL[k][1]} ${EL[k][0]}</option>`).join('')}</select></div>${rows}</div>
-<p class="mu">남는 골드로 강화석·성장석·알을 바꿔요. 매일 자정에 한도가 초기화돼요.</p>`}
+const rows=XGS.map(e=>{const left=e[3]-(c['g'+e[0]]||0),cost=xGp(e);return`<div class="row" style="margin-top:8px"><div class="grow">${e[1]}<div class="mu" style="font-size:12px">오늘 ${left}/${e[3]}</div></div><button class="s" ${left>0&&S.gold>=cost?'':'disabled'} onclick="xGbuy('${e[0]}')">🪙 ${nf(cost)}</button></div>`}).join('');
+return`<div class="card"><div>보유 골드 <b>🪙 ${nf(S.gold)}</b></div><div class="mu" style="font-size:12px;margin-top:4px">사냥터 ${S.st.maxS||1}단계 기준 가격이에요 (단계가 오르면 가격도 올라요)</div></div>
+<div class="card"><div class="row" style="margin-bottom:4px"><div class="grow mu">🪙 골드 교환 (매일 한도)</div></div>${rows}</div>
+<p class="mu">남는 골드로 강화석·성장석을 바꿔요. 매일 자정에 한도가 초기화돼요.</p>`}
 /* --- 🏆 탑·시련·보스 기록 칭호 (XTI와 XTE는 같은 순서) --- */
 XTI.push(
 ['고층의 등반가','무한의 탑 최고 20층',()=>Math.max((xI().rec||{}).best||0,xI().tw.b||0)>=20],
