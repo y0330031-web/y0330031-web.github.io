@@ -286,7 +286,9 @@ const EF={f:['전투력','⚔️'],w:['체력','🛡️'],g:['성장석 획득',
 const effV=(sp,lv)=>{const g=SP[sp][2];return Math.round(([.2,.5,1,2,3.5,5][g]+[.1,.2,.4,.8,1.3,2][g]*lv)*(.85+((sp*13)%7)*.05)*(hty(sp)==2?HV[2][htier(sp)]:1)*10)/10};
 function refreshBn(){const b={f:0,w:0,g:0,l:0,d:0,t:0,r:0,i:0},best={};S.mons.forEach(m=>{if(!(best[m.sp]>=m.lv))best[m.sp]=m.lv});for(const sp in best){b[ELM[sp]]+=effV(+sp,best[sp]);if(EL2[sp])b[EL2[sp]]+=Math.floor(effV(+sp,best[sp])/2);const t=htier(+sp),ty=hty(+sp);if(ty==3)b.l+=HV[3][t];else if(ty==4)b.d+=HV[4][t];else if(ty==5)b.r+=HV[5][t]}BN=b;EQP=S.items.reduce((a,i)=>a+(i.o?i.pw:0),0)}
 const effLine=m=>{const k=ELM[m.sp],v=effV(m.sp,m.lv),n=m.lv<80?effV(m.sp,m.lv+1):v;return`${EF[k][1]} 보유효과 <b>${EF[k][0]} +${v}%</b> <span class="mu">(다음 레벨 +${n}%)</span>${EL2[m.sp]?`<br>${EF[EL2[m.sp]][1]} 보조 효과 <b>${EF[EL2[m.sp]][0]} +${Math.floor(v/2)}%</b>`:''}`};
-const gm=x=>Math.floor(x*(1+BN.l/100)),sm=x=>{const v=x*(1+BN.g/100);return Math.floor(v)+(Math.random()<v%1?1:0)};
+/* 수급 속도 조절: 1이 원래 속도, 작을수록 골드·알이 적게 나와요 */
+const GOLD_RATE=.5,EGG_RATE=.5;
+const gm=x=>Math.floor(x*(1+BN.l/100)*GOLD_RATE),sm=x=>{const v=x*(1+BN.g/100);return Math.floor(v)+(Math.random()<v%1?1:0)};
 const nf=n=>{n=Math.floor(n||0);if(n<10000)return n.toLocaleString();const U=[['조',1e12],['억',1e8],['만',1e4]];for(const[u,d]of U)if(n>=d){const v=n/d;return(v>=100?Math.floor(v):v>=10?Math.floor(v*10)/10:Math.floor(v*100)/100)+u}};
 const nm=m=>m.nick||SP[m.sp][0];
 const mhp=m=>Math.floor(pw(m)*4*(1+BN.w/100)*(1+ha(m.sp,1)/100)*RL(m.sp)[3]/RL(m.sp)[2]);
@@ -307,7 +309,7 @@ const al=pt.filter(m=>!(m.dn>0)),P=al.reduce((a,m)=>a+ef(m,he),0);if(!P)return;c
 if(H.hp>0){const v=al[rn(al.length)],d=Math.ceil(ehp(s)*(boss?.018:.005));v.hp=Math.max(0,v.hp-d);fx.t=v.id;fx.d=d;if(v.hp<=0){v.dn=15;lg('😵 '+nm(v)+' 기절! (15초 후 회복)');if(pt.every(m=>m.dn>0)){H.hp=null;H.lock=1;let t=H.s-1;if(t%10==0)t--;H.s=Math.max(1,t);lg('🏳️ 파티 전멸! '+H.s+'단계에서 파밍 — 준비되면 도전 버튼을 누르세요')}}return}
 S.st.kills++;if(boss)S.st.boss++;S.st.maxS=Math.max(S.st.maxS,s);al.forEach(m=>{m.hp=Math.min(mhp(m),m.hp+mhp(m)*.2*(1+BN.i/100))});S.gold+=gm(Math.floor(4+s*1.5)*(boss?5:1));if(Math.random()<.25||boss)S.stone+=sm(boss?3:1);if(Math.random()<(boss?1:.06))S.ore+=boss?3+Math.floor(s/10):1+Math.floor(s/20);
 if(boss||Math.random()<.02){const i=mkItem(s);lg('🎁 '+itN(i)+' 획득')}
-if(Math.random()<(boss?.03:.0012)*(1+BN.d/100)){const eg=giveEgg(Math.random()<.5?he:null);lg('🥚 '+(eg.el?EL[eg.el][0]+' 속성 ':'')+'알 발견!')}
+if(Math.random()<(boss?.03:.0012)*(1+BN.d/100)*EGG_RATE){const eg=giveEgg(Math.random()<.5?he:null);lg('🥚 '+(eg.el?EL[eg.el][0]+' 속성 ':'')+'알 발견!')}
 if(boss)lg('👑 '+s+'단계 보스 처치');if(H.hold||(!boss&&(H.lock||(s+1)%10==0))){}else{H.s++;H.lock=0}H.hp=null}
 function catchUp(){const el=Math.min(54000,Math.floor((now()-S.hunt.last)/1000));if(el<=0)return;const b={g:S.gold,s:S.stone,e:S.eggs.length,i:S.items.length};for(let k=0;k<el;k++)step();S.hunt.last=now();
 if(el>=30)toast(`방치 ${fmt(el)}: 골드 +${S.gold-b.g}, 성장석 +${S.stone-b.s}, 장비 +${S.items.length-b.i}, 알 +${S.eggs.length-b.e}`)}
@@ -369,7 +371,7 @@ function sendD(t){const id=document.getElementById('sel').value;if(!id)return to
 function sendAll(t){const l=S.mons.filter(m=>m.st=='idle');if(!l.length)return;l.forEach(m=>dsp(m,t));save();render();toast(`${l.length}마리 파견 출발!`)}
 const dEnd=d=>d.t0+TR[d.t].s*1000;
 const dChance=(m,t)=>{const T=TR[t],R=Math.floor(15*Math.pow(T.m,.85)*xDf().hp);return Math.max(.2,Math.min(1,(m?pw(m):10)/R))};
-function claim(d,u){S.st.disp++;const m=mon(d.m),T=TR[d.t],ch=dChance(m,d.t),ok=Math.random()<ch,k=ok?xDf().rw:.3,oo=Math.max(1,Math.floor(Math.ceil(T.m/2)*k));S.ore+=oo;u.o+=oo;if(m)m.st='idle';u.ok=ok;u.ch=ch;const p=m?pw(m):10,g=Math.floor(gm((10+(m?m.lv:1)*3)*(1+(m?m.g:0)*.3)*T.m*(1+BN.r/100))*k),s=Math.floor(sm(Math.ceil(T.m*(1+Math.random()*2))*(1+BN.r/100))*k);S.gold+=g;S.stone+=s;u.g+=g;u.s+=s;if(ok){if(Math.random()<T.i)u.i.push(mkItem(p/6+T.q*5));if(Math.random()<T.e*(1+BN.d/100)){giveEgg();u.e++}}}
+function claim(d,u){S.st.disp++;const m=mon(d.m),T=TR[d.t],ch=dChance(m,d.t),ok=Math.random()<ch,k=ok?xDf().rw:.3,oo=Math.max(1,Math.floor(Math.ceil(T.m/2)*k));S.ore+=oo;u.o+=oo;if(m)m.st='idle';u.ok=ok;u.ch=ch;const p=m?pw(m):10,g=Math.floor(gm((10+(m?m.lv:1)*3)*(1+(m?m.g:0)*.3)*T.m*(1+BN.r/100))*k),s=Math.floor(sm(Math.ceil(T.m*(1+Math.random()*2))*(1+BN.r/100))*k);S.gold+=g;S.stone+=s;u.g+=g;u.s+=s;if(ok){if(Math.random()<T.i)u.i.push(mkItem(p/6+T.q*5));if(Math.random()<T.e*(1+BN.d/100)*EGG_RATE){giveEgg();u.e++}}}
 const dTxt=u=>(u.ok===false?`⚠️ 탐험 실패(성공률 ${Math.round(u.ch*100)}%)! 보상 30%만 — `:'')+`골드 +${nf(u.g)}, 성장석 +${nf(u.s)}, 강화석 +${nf(u.o)}`+(u.i.length?`, 장비 ${u.i.length}개`+(u.i.length==1?' ('+itN(u.i[0])+')':''):'')+(u.e?`, 🥚 알 ${u.e}개!`:'');
 function collect(i){const d=S.disp[i];if(!d)return;if(now()<dEnd(d))return recall(i);const u={g:0,s:0,o:0,i:[],e:0};claim(d,u);S.disp.splice(i,1);save();render();toast('파견 완료: '+dTxt(u))}
 /* 중간 회수: 경과 시간 비율의 절반만큼 골드·성장석·강화석 (알·장비는 없음) */
@@ -401,7 +403,7 @@ const A=hp.map((h,i)=>h>0?i:-1).filter(i=>i>=0);if(!A.length)break;const t=A[rn(
 return{win:0,ev}}
 function enter(){if(busy)return;dunInit();if(dRem()<=0)return;const D=S.dun,fl=D.floor,e=dEl(fl),pt=dParty(fl);if(!pt.length)return toast('몬스터가 필요해요');const E=dEn(fl);
 const R=sim(pt,e,E),win=R.win;let t;
-if(win){D.used++;const dm=xDm(e),g=gm((100+fl*40)*(1+BN.t/100)*dm),s=sm((3+fl)*(1+BN.t/100)*dm),it=mkItem(fl*3);const o=(3+Math.floor(fl/3))*dm;S.st.dun++;if(dm>1)xI().dwn=(xI().dwn||0)+1;S.gold+=g;S.stone+=s;S.ore+=o;t=`${fl}층 클리어!<br>골드 +${nf(g)}, 성장석 +${nf(s)}, 강화석 +${o}<br>${itN(it)}`;if(dm>1)t+='<br>🌟 요일 속성 보너스 ×2';if(Math.random()<.04*(1+BN.d/100)){const eg=giveEgg(Math.random()<.5?e:null);t+='<br>🥚 '+(eg.el?EL[eg.el][0]+' 속성 ':'')+'알 획득!'}if(fl>=D.max){D.max=fl+1;D.floor=fl+1}}else{S.gold+=20;t='패배… 몬스터들이 버티지 못했어요<br>골드 +20<br>입장 횟수는 차감되지 않았어요'}
+if(win){D.used++;const dm=xDm(e),g=gm((100+fl*40)*(1+BN.t/100)*dm),s=sm((3+fl)*(1+BN.t/100)*dm),it=mkItem(fl*3);const o=(3+Math.floor(fl/3))*dm;S.st.dun++;if(dm>1)xI().dwn=(xI().dwn||0)+1;S.gold+=g;S.stone+=s;S.ore+=o;t=`${fl}층 클리어!<br>골드 +${nf(g)}, 성장석 +${nf(s)}, 강화석 +${o}<br>${itN(it)}`;if(dm>1)t+='<br>🌟 요일 속성 보너스 ×2';if(Math.random()<.04*(1+BN.d/100)*EGG_RATE){const eg=giveEgg(Math.random()<.5?e:null);t+='<br>🥚 '+(eg.el?EL[eg.el][0]+' 속성 ':'')+'알 획득!'}if(fl>=D.max){D.max=fl+1;D.floor=fl+1}}else{S.gold+=20;t='패배… 몬스터들이 버티지 못했어요<br>골드 +20<br>입장 횟수는 차감되지 않았어요'}
 save();if(window.xQ){xQ.n++;if(win)xQ.w++;else xQ.lose=1;return}render();battle(pt,fl,e,E,win,t,R.ev)}
 const sl=ms=>new Promise(r=>setTimeout(r,skip?0:ms));
 function ack(el,c){el.classList.remove(c);void el.offsetWidth;el.classList.add(c)}
@@ -1179,7 +1181,7 @@ const E=[
  {l:`💎 성장석 ×10 (🪙 ${nf(b)})`,ok:S.gold>=b,f:()=>{S.gold-=b;S.stone+=10;return '성장석 ×10을 샀어요.'}},
  {l:'사지 않는다',f:()=>'상인은 어깨를 으쓱하며 떠났어요.'}]}},
 {ic:'🐾',t:'다친 몬스터',d:()=>'숲속에서 다친 몬스터가 떨고 있어요.',ch:()=>[
- {l:'💎 성장석 3개로 치료한다',ok:S.stone>=3,f:()=>{S.stone-=3;if(Math.random()<.7){const g=Math.floor(B()*3);S.gold+=g;S.ore+=1;return `고마움의 선물! 골드 +${nf(g)}, 강화석 +1`}giveEgg(null,0,'n');return '몬스터가 알을 하나 두고 갔어요! 🥚 일반 알 +1'}},
+ {l:'💎 성장석 3개로 치료한다',ok:S.stone>=3,f:()=>{S.stone-=3;if(Math.random()<.85){const g=Math.floor(B()*3);S.gold+=g;S.ore+=1;return `고마움의 선물! 골드 +${nf(g)}, 강화석 +1`}giveEgg(null,0,'n');return '몬스터가 알을 하나 두고 갔어요! 🥚 일반 알 +1'}},
  {l:'모른 척 지나간다',f:()=>'발걸음이 조금 무거웠어요.'}]},
 {ic:'🎲',t:'떠돌이 도박꾼',d:()=>'"한판 어때? 이기면 두 배 이상이야!"',ch:()=>{const a=B(),b=B()*3;return[
  {l:`🪙 ${nf(a)} 건다 (승률 45%, 이기면 2.3배)`,ok:S.gold>=a,f:()=>{if(Math.random()<.45){const g=Math.floor(a*1.3);S.gold+=g;return `이겼어요! 골드 +${nf(g)}`}S.gold-=a;return `졌어요... 골드 -${nf(a)}`}},
