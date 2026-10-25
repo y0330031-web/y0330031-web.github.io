@@ -1169,6 +1169,7 @@ const R=(a,b)=>a+Math.random()*(b-a);
 const st=()=>S.hunt.s,B=()=>Math.max(50,gm(Math.floor(4+st()*1.5))*40);
 const party=()=>S.mons.filter(m=>m.st=='hunt');
 const winP=()=>{const P=party().reduce((a,m)=>a+ef(m,hEl(st())),0),r=P/ehp(st());return Math.max(.4,Math.min(.85,.55+.1*Math.log2(Math.max(.01,r)*3)))};
+const evDc=()=>.5+((ev.exp/1000|0)%21)/100;
 const lose=x=>{const l=Math.min(S.gold,Math.floor(x));S.gold-=l;return l};
 const item=sc=>{const i=mkItem(sc);return '장비 '+itN(i)};
 const E=[
@@ -1176,16 +1177,21 @@ const E=[
  {l:'그냥 연다 (함정 위험)',f:()=>{const x=Math.random();if(x<.55){const g=gm(Math.floor(B()*1.5)),z=sm(3);S.gold+=g;S.stone+=z;return `상자 속에 보물이 가득! 골드 +${nf(g)}, 성장석 +${z}`}if(x<.8)return '장비가 들어 있었어요! '+item(st());return `함정이다! 골드 -${nf(lose(B()*.5))}`}},
  {l:'💎 성장석 3개로 열쇠를 만든다 (안전)',ok:S.stone>=3,f:()=>{S.stone-=3;if(Math.random()<.7){const g=Math.floor(B()*2.5);S.gold+=g;return `안전하게 열었어요! 골드 +${nf(g)}`}return '안전하게 열었어요! '+item(st()+3)}},
  {l:'지나간다',f:()=>'상자를 두고 길을 떠났어요.'}]},
-{ic:'🧙',t:'떠돌이 상인',d:()=>'수상한 상인이 물건을 보여줘요. 하나만 살 수 있어요.',ch:()=>{const a=B(),b=Math.floor(B()*.6);return[
- {l:`🔨 강화석 ×2 (🪙 ${nf(a)})`,ok:S.gold>=a,f:()=>{S.gold-=a;S.ore+=2;return '강화석 ×2를 샀어요.'}},
- {l:`💎 성장석 ×10 (🪙 ${nf(b)})`,ok:S.gold>=b,f:()=>{S.gold-=b;S.stone+=10;return '성장석 ×10을 샀어요.'}},
+{ic:'🧙',t:'떠돌이 상인',d:()=>`수상한 상인이 상점보다 싼 값에 물건을 팔아요. 오늘은 ${Math.round((1-evDc())*100)}% 할인! 하나만 살 수 있어요.`,ch:()=>{const f=xS(),c=evDc(),a=Math.floor(8*600*f*c),b=Math.floor(40*250*f*c),k=Math.floor((5*600+25*250)*f*c*.85),it=Math.floor(8000*f*c);return[
+ {l:`🔨 강화석 ×8 (🪙 ${nf(a)})`,ok:S.gold>=a,f:()=>{S.gold-=a;S.ore+=8;return '강화석 ×8을 샀어요.'}},
+ {l:`💎 성장석 ×40 (🪙 ${nf(b)})`,ok:S.gold>=b,f:()=>{S.gold-=b;S.stone+=40;return '성장석 ×40을 샀어요.'}},
+ {l:`🎁 세트: 강화석 ×5 + 성장석 ×25 (🪙 ${nf(k)})`,ok:S.gold>=k,f:()=>{S.gold-=k;S.ore+=5;S.stone+=25;return '세트를 샀어요! 강화석 ×5, 성장석 ×25'}},
+ {l:`🎒 비밀 장비 (🪙 ${nf(it)})`,ok:S.gold>=it,f:()=>{S.gold-=it;return '상인이 숨겨 둔 장비를 건넸어요! '+item(st()+8)}},
  {l:'사지 않는다',f:()=>'상인은 어깨를 으쓱하며 떠났어요.'}]}},
 {ic:'🐾',t:'다친 몬스터',d:()=>'숲속에서 다친 몬스터가 떨고 있어요.',ch:()=>[
  {l:'💎 성장석 3개로 치료한다',ok:S.stone>=3,f:()=>{S.stone-=3;if(Math.random()<.85){const g=Math.floor(B()*3);S.gold+=g;S.ore+=1;return `고마움의 선물! 골드 +${nf(g)}, 강화석 +1`}giveEgg(null,0,'n');return '몬스터가 알을 하나 두고 갔어요! 🥚 일반 알 +1'}},
  {l:'모른 척 지나간다',f:()=>'발걸음이 조금 무거웠어요.'}]},
-{ic:'🎲',t:'떠돌이 도박꾼',d:()=>'"한판 어때? 이기면 두 배 이상이야!"',ch:()=>{const a=B(),b=B()*3;return[
+{ic:'🎲',t:'떠돌이 도박꾼',d:()=>'"어서 와! 판을 골라 봐. 크게 걸수록 크게 먹지!"',ch:()=>{const a=B(),b=B()*3,c=Math.floor(B()*.5),d=Math.floor(S.gold*.3);return[
+ {l:`🪙 ${nf(c)} 안전판 (승률 70%, 이기면 1.4배)`,ok:S.gold>=c,f:()=>{if(Math.random()<.7){const g=Math.floor(c*.4);S.gold+=g;return `이겼어요! 골드 +${nf(g)}`}S.gold-=c;return `졌어요... 골드 -${nf(c)}`}},
  {l:`🪙 ${nf(a)} 건다 (승률 45%, 이기면 2.3배)`,ok:S.gold>=a,f:()=>{if(Math.random()<.45){const g=Math.floor(a*1.3);S.gold+=g;return `이겼어요! 골드 +${nf(g)}`}S.gold-=a;return `졌어요... 골드 -${nf(a)}`}},
- {l:`🪙 ${nf(b)} 건다 (승률 40%, 이기면 2.6배)`,ok:S.gold>=b,f:()=>{if(Math.random()<.4){const g=Math.floor(b*1.6);S.gold+=g;return `대박! 골드 +${nf(g)}`}S.gold-=b;return `크게 졌어요... 골드 -${nf(b)}`}},
+ {l:`🪙 ${nf(b)} 크게 건다 (승률 40%, 이기면 2.6배)`,ok:S.gold>=b,f:()=>{if(Math.random()<.4){const g=Math.floor(b*1.6);S.gold+=g;return `대박! 골드 +${nf(g)}`}S.gold-=b;return `크게 졌어요... 골드 -${nf(b)}`}},
+ {l:`🔥 올인: 보유 골드의 30% (🪙 ${nf(d)}, 승률 20%, 이기면 5배)`,ok:d>=B()*2,f:()=>{if(Math.random()<.2){const g=d*4;S.gold+=g;return `🎉 잭팟! 골드 +${nf(g)}`}S.gold-=d;return `전부 날렸어요... 골드 -${nf(d)}`}},
+ {l:'🎲 주사위 (💎 성장석 5개): 6은 강화석 6개, 4~5는 성장석 12개',ok:S.stone>=5,f:()=>{S.stone-=5;const r=1+Math.floor(Math.random()*6);if(r==6){S.ore+=6;return `🎲 ${r}! 강화석 +6`}if(r>=4){S.stone+=12;return `🎲 ${r}! 성장석 +12`}return `🎲 ${r}... 아무 일도 없었어요.`}},
  {l:'거절한다',f:()=>'도박은 하지 않기로 했어요.'}]}},
 {ic:'🗡️',t:'도적 습격!',d:()=>'도적 무리가 길을 막았어요!',ch:()=>{const p=winP(),br=Math.floor(B()*.4);return[
  {l:`싸운다 (승률 약 ${Math.round(p*100)}%)`,f:()=>{if(Math.random()<p){const g=Math.floor(B()*2.5),o=Math.random()<.25?1:0;S.gold+=g;S.ore+=o;return `도적을 물리쳤어요! 골드 +${nf(g)}${o?', 강화석 +1':''}`}return `패배... 골드 -${nf(lose(B()*.6))}`}},
