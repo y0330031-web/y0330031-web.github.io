@@ -1153,7 +1153,7 @@ function make(e){try{
  o.putImageData(img,0,0);return out.toDataURL()}catch(err){return null}}
 const sprite=e=>{const k=e+(window.xK?window.xK(e):'');if(!cache.has(k))cache.set(k,(window.xMS&&window.xMS(e))||make(e));return cache.get(k)};
 function conv(){document.querySelectorAll(SEL).forEach(el=>{Array.from(el.childNodes).forEach(n=>{if(n.nodeType!==3)return;const m=RE.exec(n.data);if(!m)return;const u=sprite(m[1]);if(!u)return;
- const im=new Image();im.src=u;im.alt=m[1];im.className='pxs'+(window.xK&&window.xK(m[1])?' pxm':'');im.draggable=false;el.replaceChild(im,n)})})}
+ const im=new Image();im.src=u;im.alt=m[1];im.className='pxs'+(window.xK&&window.xK(m[1])?' pxm':'');if(window.xSz){const z=window.xSz(m[1]);if(z)im.style.width=im.style.height=z+'em'}im.draggable=false;el.replaceChild(im,n)})})}
 function start(){if(!document.body)return;conv();const ob=new MutationObserver(()=>{conv();ob.takeRecords()});ob.observe(document.body,{childList:true,subtree:true,characterData:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start()})();
 </script>
@@ -1335,42 +1335,35 @@ const gen=function(i,tr,att){const r=rng(i*7919+13+(att|0)*104729),g=Array.from(
  P=(x,y,v)=>{x=Math.round(x);if(x<0||x>11)return;Q(x,y,v);Q(23-x,y,v)},
  E=(cy,rx,ry,v)=>{for(let y=0;y<NS;y++)for(let x=0;x<12;x++){const dx=11.5-x,dy=y-cy;if(dx*dx/(rx*rx)+dy*dy/(ry*ry)<=1)P(x,y,v)}},
  F=(cx,cy,rx,ry,v)=>{for(let y=0;y<NS;y++)for(let x=0;x<NS;x++){const dx=(x-cx)/rx,dy=(y-cy)/ry;if(dx*dx+dy*dy<=1)Q(x,y,v)}};
- const el=(typeof ELM!='undefined'&&ELM[i])||'f',gr=(typeof SP!='undefined'&&SP[i]?SP[i][2]:0)|0,tt=tr|0,t=ri(0,15),es=ri(0,3),ps=ri(0,2),fr=t<4||[9,10,11,12,14,15].includes(t);
+ const el=(typeof ELM!='undefined'&&ELM[i])||'f',gr=(typeof SP!='undefined'&&SP[i]?SP[i][2]:0)|0,tt=tr|0,t=(i*5+3+Math.floor((att|0)/4))%17,es=ri(0,3),ps=ri(0,5),fr=[0,1,2,3,9,10,11,12,14,15,16].includes(t);
  let ax,ay,bx=11,by=15,brx=5,bry=3,hx=0,hy=0,hr=3;
- if(fr&&t>=4){const EYv=(hc,hw)=>{const ey=Math.round(hc-1),ne=ri(1,3),ex2=Math.round(11.5-hw*.45);
-   if(ne==1){P(11,ey,4);P(11,ey+1,5)}else if(es==3){P(ex2,ey+1,5);P(ex2-1,ey+1,5)}else if(es==1){for(const[a,b]of[[0,-1],[-1,-1],[0,0],[-1,0]])P(ex2+a,ey+b,4);P(ex2,ey+1,5);P(ex2-1,ey+1,5)}else{P(ex2,ey,4);P(ex2-1,ey,4);P(ex2-1,ey+1,4);P(ex2,ey+1,5);if(es==2)P(ex2-1,ey-1,5)}
-   const mk=ri(0,2),my=ey+3;if(mk==1){P(11,my,5);P(10,my,5)}else if(mk==2){P(11,my,5);P(10,my+1,4)}},
-  SHF=()=>{for(let y=0;y<NS;y++)for(let x=0;x<12;x++)if(g[y][x]==1){if(y==0||g[y-1][x]==0)P(x,y,3);else if(y<NS-1&&g[y+1][x]==0)P(x,y,2)}};
-  const W=(y0,y1,hw,v,x0)=>{for(let y=y0;y<=y1;y++)for(let x=0;x<12;x++)if(Math.abs(11.5-x)<=hw)P(x,y,v)};
-  let hc=9,hw=4;
-  if(t==9){const bc=15;brx=ri(5,8);bry=ri(3,4);E(bc,brx,bry,1);by=bc;const nl=ri(2,4);for(let k=0;k<nl;k++){const lx=11-brx+1+k*2;P(lx,bc+bry,2);P(lx-1,bc+bry+1,2);P(lx-2,bc+bry+2,2)}
-   const cl=ri(2,3);P(11-brx-1,bc-1,1);P(11-brx-2,bc-2,1);for(let dy=-cl;dy<=cl;dy++)for(let dx=-cl;dx<=cl;dx++)if(Math.abs(dx)+Math.abs(dy)<=cl+1&&!(dx==0&&dy==-cl))P(11-brx-3+dx,bc-4+dy,6);
-   const sk=ri(2,4);P(9,bc-bry-1,1);P(9,bc-bry-2,1);P(9,bc-bry-sk-1,4);P(9,bc-bry-sk-2,5);ay=bc-bry-sk-2;hc=bc-1;hw=brx}
-  else if(t==10){hc=ri(9,11);hw=ri(4,7);const hy2=ri(5,6);E(hc,hw,hy2,1);by=hc+2;bry=hy2;brx=hw;const ye=hc+hy2+ri(2,4);for(let x=0;x<12;x++)if(11.5-x<=hw){const yy=Math.min(22,ye-(x%3==0?2:0));for(let y=hc;y<=yy;y++)P(x,y,1)}P(11-hw-1,hc+2,1);P(11-hw-2,hc+3,1);ay=hc-hy2}
-  else if(t==11){const sw=ri(2,3),cr=ri(6,10),cy=ri(3,5);for(let y=12;y<=21;y++)for(let x=0;x<12;x++)if(11.5-x<=sw+(y>19?1:0))P(x,y,1);E(11,cr,cy,6);for(let k=0;k<4;k++){const sx=ri(2,9),sy=11+ri(-cy+1,0);if(g[sy][sx]==6)P(sx,sy,4)}brx=sw;bry=5;by=17;ay=11-cy;hc=16;hw=sw+2}
-  else if(t==12){const bw=ri(4,6),bh=ri(6,8),tp=10,hh=ri(3,4),hwd=ri(3,4);W(tp,tp+bh,bw,1);W(tp-hh,tp-1,hwd,1);for(let y=tp+2;y<=tp+5;y++)for(let k=1;k<=3;k++)P(11-bw-k+1,y,1);for(let y=tp+bh+1;y<=tp+bh+2;y++)for(let x=11-bw+1;x<=10;x++)P(x,y,2);P(ri(4,9),tp+3,2);P(ri(4,9),tp+5,2);by=tp+Math.floor(bh/2);bry=bh/2;brx=bw;ay=tp-hh;hc=tp-hh+Math.floor(hh/2)+1;hw=hwd}
-  else if(t==14){const bw=ri(2,3);E(14,bw,4,1);E(9,3,3,1);P(9,6,1);P(9,5,1);P(8,5,1);for(let k=0;k<7;k++)for(let j=0;j<=6-k;j++)P(8-j,9+k,6);by=14;bry=4;brx=bw;ay=6;hc=9;hw=3}
-  else{hw=ri(5,7);const hy2=ri(5,6);hc=hy2+3;E(hc,hw,hy2,1);for(let x=11-hw+1;x<=10;x+=2){const len=ri(4,8);for(let y=hc+hy2-1;y<=hc+hy2+len;y++)P(x+(Math.floor((y-hc)/2)%2),y,1)}by=hc;bry=hy2;brx=hw;ay=hc-hy2}
-  ax=11;SHF();EYv(hc,hw)}
-  else if(fr){let hcy,hrx,hry,bcy,feet=1;
-  if(t==0){brx=ri(6,9);bry=ri(5,8);bcy=21-bry;hcy=bcy;hrx=brx;hry=bry;E(bcy,brx,bry,1);feet=r()<.6}
-  else if(t==1){hrx=ri(5,7);hry=ri(4,5);hcy=hry+3;brx=ri(3,5);bry=ri(4,5);bcy=hcy+hry+bry-2;E(bcy,brx,bry,1);E(hcy,hrx,hry,1)}
-  else if(t==2){hrx=ri(3,4);hry=3;hcy=8;brx=ri(7,9);bry=ri(3,4);bcy=15;E(bcy,brx,bry,1);E(hcy,hrx,hry,1);feet=0;for(let k=0;k<3;k++){P(3+k*2,bcy+bry,2);P(3+k*2,bcy+bry+1,2);P(2+k*2,bcy+bry+2,2)}}
-  else{brx=ri(4,5);bry=ri(8,9);bcy=12;hcy=bcy-bry+3;hrx=brx;hry=4;E(bcy,brx,bry,1)}
-  by=Math.round(bcy+(t==3?2:0));const ht=Math.round(hcy-hry),fb=Math.floor(bcy+bry);ax=11;ay=ht;
-  for(let y=0;y<NS;y++)for(let x=0;x<12;x++)if(g[y][x]==1){if(y==0||g[y-1][x]==0)P(x,y,3);else if(y<NS-1&&g[y+1][x]==0)P(x,y,2)}
-  for(let y=0;y<NS;y++)for(let x=0;x<12;x++){const dx=11.5-x,dy=y-(bcy+(t==3?3:1));if(g[y][x]>0&&dx*dx/(brx*brx*.35)+dy*dy/(bry*bry*.35)<=1&&dy>=-1)P(x,y,7)}
-  const ex=Math.round(11.5-hrx*.7),ek=ri(0,5);
-  if(ek==1){P(ex,ht-2,6);P(ex,ht-1,6);P(ex+1,ht-1,6)}else if(ek==2){P(ex-1,ht-1,6);P(ex,ht-1,6);P(ex-1,ht,6);P(ex,ht-2,6)}
-  else if(ek==3){for(let k=1;k<=5;k++){P(ex,ht-k,6);P(ex+1,ht-k,6)}}else if(ek==4){P(ex+1,ht-1,6);P(ex+1,ht-2,6);P(ex,ht-3,6)}
-  else if(ek==5){P(ex+2,ht-1,6);P(ex+2,ht-2,6);P(ex+1,ht-3,6);P(ex+1,ht-4,6);P(ex+1,ht-5,6)}
-  if(t!=2&&r()<.45){const wx=Math.round(11.5-brx)-1,wy=Math.round(bcy-bry*.5);for(let k=0;k<4;k++)for(let j=0;j<4-k;j++)P(wx-j,wy+k,6)}
-  else if((t==1||t==3)&&r()<.8){const ax2=Math.round(11.5-brx)-1,ay2=Math.round(bcy-bry*.4);P(ax2,ay2,1);P(ax2,ay2+1,1);P(ax2-1,ay2+2,1)}
-  if(feet){const fx=Math.round(11.5-brx*.5)-1;for(const[a,b]of[[0,-1],[1,-1],[0,0],[1,0],[0,1],[1,1]])P(fx+a,fb+b,2)}
-  const ey=Math.round(hcy-1),ne=ri(1,3),ex2=Math.round(11.5-hrx*.45);
-  if(ne==1){P(11,ey,4);P(11,ey+1,5)}else if(es==3){P(ex2,ey+1,5);P(ex2-1,ey+1,5)}else if(es==1){for(const[a,b]of[[0,-1],[-1,-1],[0,0],[-1,0]])P(ex2+a,ey+b,4);P(ex2,ey+1,5);P(ex2-1,ey+1,5)}
-  else{P(ex2,ey,4);P(ex2-1,ey,4);P(ex2-1,ey+1,4);P(ex2,ey+1,5);if(es==2)P(ex2-1,ey-1,5);if(ne==3&&hry>=4){P(11,ey-2,4);P(11,ey-1,5)}}
-  const mk=ri(0,2),my=ey+3;if(mk==1){P(11,my,5);P(10,my,5)}else if(mk==2){P(11,my,5);P(10,my+1,4)}
+ if(fr){const EYv=(hc,hw)=>{const ey=Math.round(hc-1),ex2=Math.round(11.5-hw*.5);
+   if(es==3){P(ex2,ey+1,5);P(ex2-1,ey+1,5)}else if(es==1){for(const[a,b]of[[0,-1],[-1,-1],[0,0],[-1,0]])P(ex2+a,ey+b,4);P(ex2,ey+1,5);P(ex2-1,ey+1,5)}
+   else{for(const[a,b]of[[0,0],[-1,0],[0,1],[-1,1]])P(ex2+a,ey+b,5);P(ex2,ey,4);if(es==2){P(ex2-1,ey-1,5);P(ex2-2,ey-2,5)}}},
+  SHF=()=>{for(let y=0;y<NS;y++)for(let x=0;x<12;x++)if(g[y][x]==1){if(y==0||g[y-1][x]==0)P(x,y,3);else if(y<NS-1&&g[y+1][x]==0)P(x,y,2)}},
+  W=(y0,y1,hw,v)=>{for(let y=y0;y<=y1;y++)for(let x=0;x<12;x++)if(Math.abs(11.5-x)<=hw)P(x,y,v)};
+  let hc=9,hw=4,eyes=1;
+  if(t<4){const ek=t,hy2=ek==2?ri(3,4):ri(4,6);hw=ri(5,7);hc=hy2+(ek==2?9:4);const bh=Math.max(2,Math.min(ri(3,5),Math.floor((22-hc-hy2+2)/2))),br=ri(3,5),bc=hc+hy2+bh-2;brx=br;bry=bh;by=bc;
+   E(bc,br,bh,1);E(hc,hw,hy2,1);ay=hc-hy2;SHF();
+   for(let y=0;y<NS;y++)for(let x=0;x<12;x++){const dx=11.5-x;let dy=y-(hc+hy2*.45);if(g[y][x]>0&&dy>=-1&&dx*dx/(hw*hw*.28)+dy*dy/(hy2*hy2*.22)<=1)P(x,y,7);dy=y-(bc+1);if(g[y][x]>0&&y>hc+hy2&&dx*dx/(br*br*.35)+dy*dy/(bh*bh*.35)<=1)P(x,y,7)}
+   const ex=Math.round(11.5-hw*.65);
+   if(ek==0){for(let k=0;k<3;k++)for(let x=ex-(2-k);x<=ex+(2-k);x++)P(x,ay-k,1);P(ex,ay-1,7)}
+   else if(ek==1){for(let dy=-2;dy<=1;dy++)for(let dx=-2;dx<=2;dx++)if(dx*dx+dy*dy<=5)P(ex+dx,ay-1+dy,1);P(ex,ay-1,7)}
+   else if(ek==2){const ln=ri(6,9);for(let k=1;k<=ln;k++){P(ex,ay-k,1);P(ex-1,ay-k,1);if(k>2&&k<ln)P(ex,ay-k,7)}}
+   else{for(let k=0;k<5;k++){P(11-hw-1,ay+1+k,6);P(11-hw,ay+1+k,6)}}
+   const ny=Math.round(hc+hy2*.2);P(11,ny,5);P(11,ny+2,5);if(ri(0,1)){P(10,ny+2,5);P(10,ny+1,5)}
+   const tk=ek==2?3:ri(0,2);if(tk==1){for(let k=0;k<6;k++){Q(12+br+Math.floor(k/2),bc+2-k,1);Q(13+br+Math.floor(k/2),bc+2-k,2)}}else if(tk==2){F(12+br+2,bc,2,4,3);Q(12+br+2,bc-4,7)}else if(tk==3)F(12+br+1,bc+1,2,2,7);
+   const fx=Math.round(11.5-br*.5)-1,fb=bc+bh;for(const[a,b]of[[0,-1],[1,-1],[0,0],[1,0],[0,1],[1,1]])P(fx+a,fb+b,2);P(11-br-1,bc-bh+2,1);P(11-br-1,bc-bh+3,1)}
+  else if(t==9){const pg=ri(0,1);brx=ri(5,7);bry=ri(6,8);by=21-bry;E(by,brx,bry,1);ay=by-bry;hc=ay+Math.round(bry*.6);hw=brx;SHF();E(by+Math.round(bry*.35),brx*.6,bry*.6,7);
+   const ex2=Math.round(11.5-brx*.45);for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)if(dx*dx+dy*dy<=5)P(ex2+dx,hc+dy,4);P(ex2,hc,5);P(ex2,hc+1,5);P(11,hc+3,6);P(11,hc+4,6);
+   for(let k=0;k<ri(4,6);k++){P(11-brx,by-1+k,6);P(12-brx,by-1+k,6)}for(const x of[8,9,10])P(x,22,6);if(!pg){P(ex2+1,ay-1,1);P(ex2+1,ay-2,1);P(ex2,ay-1,1)}eyes=0}
+  else if(t==10){hc=ri(9,11);hw=ri(4,7);const hy2=ri(5,6);E(hc,hw,hy2,1);by=hc+2;bry=hy2;brx=hw;const ye=hc+hy2+ri(2,4);for(let x=0;x<12;x++)if(11.5-x<=hw){const yy=Math.min(22,ye-(x%3==0?2:0));for(let y=hc;y<=yy;y++)P(x,y,1)}P(11-hw-1,hc+2,1);P(11-hw-2,hc+3,1);ay=hc-hy2;SHF();P(11,hc+3,5)}
+  else if(t==11){const sw=ri(2,3),cr=ri(6,10),cy=ri(3,5);for(let y=12;y<=21;y++)for(let x=0;x<12;x++)if(11.5-x<=sw+(y>19?1:0))P(x,y,1);E(11,cr,cy,6);for(let k=0;k<4;k++){const sx=ri(2,9),sy=11+ri(-cy+1,0);if(g[sy][sx]==6)P(sx,sy,4)}brx=sw;bry=5;by=17;ay=11-cy;hc=16;hw=sw+2;SHF();P(11,18,5)}
+  else if(t==12){const bw=ri(4,6),bh=ri(6,8),tp=10,hh=ri(3,4),hwd=ri(3,4);W(tp,tp+bh,bw,1);W(tp-hh,tp-1,hwd,1);for(let y=tp+2;y<=tp+5;y++)for(let k=1;k<=3;k++)P(11-bw-k+1,y,1);for(let y=tp+bh+1;y<=tp+bh+2;y++)for(let x=11-bw+1;x<=10;x++)P(x,y,2);P(ri(4,9),tp+3,2);P(ri(4,9),tp+5,2);by=tp+Math.floor(bh/2);bry=bh/2;brx=bw;ay=tp-hh;hc=tp-hh+Math.floor(hh/2)+1;hw=hwd;SHF();P(11,hc+2,5)}
+  else if(t==14){const bw=ri(2,3);E(14,bw,4,1);E(9,3,3,1);P(9,6,1);P(9,5,1);P(8,5,1);for(let k=0;k<7;k++)for(let j=0;j<=6-k;j++)P(8-j,9+k,6);by=14;bry=4;brx=bw;ay=6;hc=9;hw=3;SHF();P(10,11,4)}
+  else if(t==15){hw=7;hc=12;E(12,7,4,1);E(17,ri(3,4),4,1);by=17;bry=4;brx=4;ay=6;for(const[dx,dy]of[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]])P(7+dx,8+dy,1);SHF();P(7,8,4);P(6,8,4);P(7,7,4);P(6,7,4);P(7,8,5);P(7,7,5);for(let x=6;x<=11;x++)P(x,14,5);P(5,20,1);P(4,21,1);P(3,22,2);P(4,22,2);eyes=0}
+  else{const sr=ri(6,8),sh=ri(4,5);E(17,sr,sh,1);E(12,Math.round(sr*.55),ri(3,4),1);P(11,8,1);by=17;bry=sh;brx=sr;ay=9;hc=15;hw=sr*1.2;SHF();P(8,12,4);P(7,13,4);P(8,13,4);P(11,18,5);P(10,18,5)}
+  ax=11;if(eyes)EYv(hc,hw)
  }else{bx=9;by=14;
   if(t==4||t==8){brx=ri(6,8);bry=ri(3,5);F(bx,by,brx,bry,1);hr=ri(3,4);const nk=ri(0,4);hx=bx+brx+(nk>2?-1:0);hy=by-bry+1-nk;F(hx+1,hy,hr+1,hr,1);if(nk>1)for(let k=1;k<=nk;k++){Q(hx-1,hy+k,1);Q(hx,hy+k,1)}
    for(const lx of[bx-brx+2,bx-brx+4,bx+brx-5,bx+brx-3]){const n=ri(2,4);for(let k=0;k<=n;k++){Q(lx,by+bry-1+k,2);Q(lx+1,by+bry-1+k,2)}}
@@ -1390,8 +1383,8 @@ const gen=function(i,tr,att){const r=rng(i*7919+13+(att|0)*104729),g=Array.from(
   ax=hx;ay=hy-hr;
   for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1){if(y==0||g[y-1][x]==0)Q(x,y,3);else if(y<NS-1&&g[y+1][x]==0)Q(x,y,2)}
   if(t!=7)for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1&&y>by+bry*.35)Q(x,y,7)}
- if(ps==1)for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1&&x%4==0)Q(x,y,2);
- if(ps==2)for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1&&(x+y*2)%7==0)Q(x,y,2);
+ if(ps==4)for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1&&x%4==0)Q(x,y,6);
+ if(ps==5)for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1&&(x+y*2)%7==0)Q(x,y,6);
  if(tr==-1)return g;
  const M=(dx,dy,v)=>{if(fr)P(11-dx,ay+dy,v);else{Q(ax+dx,ay+dy,v);Q(ax-dx,ay+dy,v)}};
  const MO={f:()=>{M(0,-1,12);M(1,-1,11);M(0,-2,11);M(0,-3,12)},w:()=>{M(0,-1,13);M(1,-1,13);M(0,-2,13);M(0,-3,13)},g:()=>{M(0,-1,16);M(0,-2,16);M(1,-3,16);M(2,-3,16);M(2,-2,16)},t:()=>{M(0,-1,15);M(1,-2,15);M(0,-3,15);M(1,-4,15)},r:()=>{M(0,-1,14);M(1,-1,14);M(0,-2,14);M(2,-1,14)},i:()=>{for(let k=1;k<=4;k++)M(0,-k,13);M(2,-1,13);M(2,-2,13);M(3,-1,13)},l:()=>{M(0,-3,9);M(1,-3,9);M(2,-3,9);M(3,-2,9);M(3,-1,9)},d:()=>{M(1,-1,17);M(2,-1,17);M(2,-2,17);M(3,-3,17)}};
@@ -1407,11 +1400,12 @@ const gen=function(i,tr,att){const r=rng(i*7919+13+(att|0)*104729),g=Array.from(
  return g};
 let ATT=null;const pc=n=>{n=n-((n>>>1)&0x55555555);n=(n&0x33333333)+((n>>>2)&0x33333333);return(((n+(n>>>4))&0x0F0F0F0F)*0x01010101)>>>24},
  mkb=g=>{const b=new Uint32Array(18);for(let y=0;y<NS;y++)for(let x=0;x<NS;x++){const v=g[y][x];if(v>0&&v!=10){const k=y*NS+x;b[k>>5]|=1<<(k&31)}}return b},
- dst=(a,b)=>{let c=0;for(let k=0;k<18;k++)c+=pc(a[k]^b[k]);return c},XTH=60;
+ dst=(a,b)=>{let c=0;for(let k=0;k<18;k++)c+=pc(a[k]^b[k]);return c},XTH=34;
 const xAtt=i=>{if(!ATT){ATT=[];const ms=[],N=typeof SP!='undefined'?SP.length:0;for(let k=0;k<N;k++){let best=0,bd=-1,bm=null;for(let a=0;a<40;a++){const m=mkb(gen(k,-1,a));let d=1e9;for(const o of ms){const c=dst(m,o);if(c<d)d=c;if(d<=bd)break}if(d>bd){bd=d;best=a;bm=m}if(bd>=XTH)break}ATT.push(best);ms.push(bm)}}return ATT[i]||0};
 window.xGrid=(i,tr)=>gen(i,tr,xAtt(i));
-const EM={},EH={f:8,w:205,g:115,t:50,r:28,i:192,l:46,d:278},ES={f:[75,52],w:[70,52],g:[60,48],t:[85,55],r:[30,42],i:[55,70],l:[90,70],d:[45,32]},pal=(i,el)=>{const r=rng(i*31+7),h=((EH[el]||0)+(r()-.5)*44+360)%360,[s0,l0]=ES[el]||[60,50],s=s0+(r()-.5)*20,l=l0+(r()-.5)*10,h2=(h+90+r()*160)%360;return[0,`hsl(${h},${s}%,${l}%)`,`hsl(${h},${s}%,${l-18}%)`,`hsl(${h},${s}%,${l+16}%)`,'#ffffff','#1a1c2c',`hsl(${h2},70%,55%)`,`hsl(${h},38%,${Math.min(88,l+32)}%)`,'#1a1c2c','#ffd36b',`hsl(${h2},95%,78%)`,'#ff7a1a','#ffd84d','#bfeaff','#7a7f96','#ffe94d','#4fbf5a','#3a1f5c']};
+const EM={},EH={f:8,w:205,g:115,t:50,r:28,i:192,l:46,d:278},ES={f:[75,52],w:[70,52],g:[60,48],t:[85,55],r:[30,42],i:[55,70],l:[90,70],d:[45,32]},pal=(i,el)=>{const r=rng(i*31+7),h=(i*137.508+(EH[el]||0)*.15)%360,[s0,l0]=ES[el]||[60,50],s=s0+(r()-.5)*20,l=l0+(r()-.5)*10,h2=(h+140+r()*80)%360;return[0,`hsl(${h},${s}%,${l}%)`,`hsl(${h},${s}%,${l-18}%)`,`hsl(${h},${s}%,${l+16}%)`,'#ffffff','#1a1c2c',`hsl(${h2},70%,55%)`,`hsl(${h},38%,${Math.min(88,l+32)}%)`,'#1a1c2c','#ffd36b',`hsl(${h2},95%,78%)`,'#ff7a1a','#ffd84d','#bfeaff','#7a7f96','#ffe94d','#4fbf5a','#3a1f5c']};
 window.xPal=pal;
+window.xSz=e=>{if(typeof SP=='undefined')return 0;if(!EM.k){SP.forEach((s,i)=>{EM[s[1]]=i});EM.k=1}const i=EM[e];if(i==null)return 0;const r=rng(i*13+5)();return+([.78,.86,.96,1.06,1.18,1.32][SP[i][2]]*(.92+r*.16)).toFixed(2)};
 window.xK=e=>{if(typeof SP=='undefined')return'';if(!EM.k){SP.forEach((s,i)=>{EM[s[1]]=i});EM.k=1}const i=EM[e];return i==null?'':'|'+tierN((S.dex&&S.dex[i])||0)};
 const cs=document.createElement('style');cs.textContent='.pxm{transform-origin:50% 100%;animation:pxbr 1.2s steps(2) infinite}.nmo .pxm{animation:pxhp .5s steps(2) infinite}@keyframes pxbr{0%{transform:scaleY(1) scaleX(1)}50%{transform:scaleY(.92) scaleX(1.05)}}@keyframes pxhp{0%{transform:translateY(0)}50%{transform:translateY(-3px) rotate(4deg)}}.en .pxm{animation-duration:.9s}@media(prefers-reduced-motion:reduce){.pxm{animation:none!important}}';document.head.appendChild(cs);
 window.xMS=function(e){try{if(typeof SP=='undefined')return null;if(!EM.k){SP.forEach((s,i)=>{EM[s[1]]=i});EM.k=1}
