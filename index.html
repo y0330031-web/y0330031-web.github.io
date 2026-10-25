@@ -1299,7 +1299,7 @@ V.nest=function(){fix();const ms=S.mons.slice(0,14),m=S.mons.find(x=>x.id==sel),
  const opt=(v,o)=>`<option value="">선택</option>`+id.filter(x=>x.id!=o).map(x=>`<option value="${x.id}" ${x.id==v?'selected':''}>${lab(x)}</option>`).join('');
  const A=id.find(x=>x.id==fa),Bm=id.find(x=>x.id==fb),cg=A&&Bm?Math.max(A.g,Bm.g):0,fc=fcost(cg),ok=A&&Bm&&A.lv>=10&&Bm.lv>=10&&S.gold>=fc.g&&S.stone>=fc.s&&S.ore>=fc.o;
  return`<div class="card"><h2 style="margin:0 0 8px">🏡 보금자리</h2>${scene(ms)}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${Object.keys(TH).map(k=>`<button class="s" style="padding:6px 10px;${(S.st.nth||'forest')==k?'outline:2px solid #fff':''}" onclick="nTheme('${k}')">${TH[k][0]}</button>`).join('')}</div><div class="mu" style="margin-top:6px">몬스터를 누르면 말을 걸 수 있어요. ✨는 변이 개체(전투력 +10%)예요.</div></div>
-<div class="card"><h3 style="margin:0 0 6px">🐾 내 몬스터 이름·성격</h3><select style="width:100%" onchange="sel=+this.value||null;render()"><option value="">몬스터 선택</option>${S.mons.map(x=>`<option value="${x.id}" ${x.id==sel?'selected':''}>${lab(x)}</option>`).join('')}</select>${m?`<div style="margin-top:8px">${PE[m.pe][0]} <b>${PE[m.pe][1]}</b> ${PE[m.pe][3]?'<span class="mu">('+PE[m.pe][3]+')</span>':''}${m.mu?' ✨변이':''}<button class="s" style="margin-left:8px" onclick="nName(${m.id})">이름 짓기</button></div>`:''}</div>
+<div class="card"><h3 style="margin:0 0 6px">🐾 내 몬스터 이름·성격</h3><select style="width:100%" onchange="sel=+this.value||null;render()"><option value="">몬스터 선택</option>${S.mons.map(x=>`<option value="${x.id}" ${x.id==sel?'selected':''}>${lab(x)}</option>`).join('')}</select>${m?`<div style="margin-top:8px">${PE[m.pe][0]} <b>${PE[m.pe][1]}</b> <span class="mu">· 특색: ${window.xSig?xSig(m.sp):''}</span> ${PE[m.pe][3]?'<span class="mu">('+PE[m.pe][3]+')</span>':''}${m.mu?' ✨변이':''}<button class="s" style="margin-left:8px" onclick="nName(${m.id})">이름 짓기</button></div>`:''}</div>
 <div class="card"><h3 style="margin:0 0 6px">💞 교배 (두 마리 → 새 몬스터)</h3><div class="mu" style="margin-bottom:6px">쉬는 Lv.10 이상 몬스터 두 마리가 사라지고, 더 강한 새 몬스터가 태어나요. 성격은 부모에게서 물려받고 변이가 날 수 있어요.</div><div style="display:grid;gap:6px"><select onchange="nF(0,this.value)">${opt(fa,fb)}</select><select onchange="nF(1,this.value)">${opt(fb,fa)}</select><button ${ok?'':'disabled'} onclick="nFuse()">💞 합치기 (🪙 ${nf(fc.g)} · 💎 ${fc.s} · 🔨 ${fc.o})</button></div></div>
 <div class="card"><h3 style="margin:0 0 6px">📜 둥지지기 이야기 (${unl()}/${ST.length})</h3>${ST.map((s,i)=>{let o=0;try{o=s[2]()}catch(e){}const r=(S.st.sr||{})[i];return o?`<button class="s" style="width:100%;margin-bottom:6px;text-align:left" onclick="nRead(${i})">${r?'📖':'🎁'} ${i+1}. ${s[0]} ${r?'':'<span class="mu">(읽고 보상 받기)</span>'}</button>`:`<div class="mu" style="margin-bottom:6px">🔒 ${i+1}장 · 조건: ${s[3]}</div>`}).join('')}</div>`};
 TABS.push(['nest','🏡','보금자리']);
@@ -1335,8 +1335,8 @@ const gen=function(i,tr,att){const r=rng(i*7919+13+(att|0)*104729),g=Array.from(
  P=(x,y,v)=>{x=Math.round(x);if(x<0||x>11)return;Q(x,y,v);Q(23-x,y,v)},
  E=(cy,rx,ry,v)=>{for(let y=0;y<NS;y++)for(let x=0;x<12;x++){const dx=11.5-x,dy=y-cy;if(dx*dx/(rx*rx)+dy*dy/(ry*ry)<=1)P(x,y,v)}},
  F=(cx,cy,rx,ry,v)=>{for(let y=0;y<NS;y++)for(let x=0;x<NS;x++){const dx=(x-cx)/rx,dy=(y-cy)/ry;if(dx*dx+dy*dy<=1)Q(x,y,v)}};
- const el=(typeof ELM!='undefined'&&ELM[i])||'f',gr=(typeof SP!='undefined'&&SP[i]?SP[i][2]:0)|0,tt=tr|0,t=(i*5+3+Math.floor((att|0)/4))%17,es=ri(0,3),ps=ri(0,5),fr=[0,1,2,3,9,10,11,12,14,15,16].includes(t);
- let ax,ay,bx=11,by=15,brx=5,bry=3,hx=0,hy=0,hr=3;
+ const el=(typeof ELM!='undefined'&&ELM[i])||'f',gr=(typeof SP!='undefined'&&SP[i]?SP[i][2]:0)|0,tt=tr|0,t=(i*5+3)%17,es=ri(0,3),ps=ri(0,5),fr=[0,1,2,3,9,10,11,12,14,15,16].includes(t);
+ let ax,ay,bx=11,by=15,brx=5,bry=3,hx=0,hy=0,hr=3,HC=9,HW=4;
  if(fr){const EYv=(hc,hw)=>{const ey=Math.round(hc-1),ex2=Math.round(11.5-hw*.5);
    if(es==3){P(ex2,ey+1,5);P(ex2-1,ey+1,5)}else if(es==1){for(const[a,b]of[[0,-1],[-1,-1],[0,0],[-1,0]])P(ex2+a,ey+b,4);P(ex2,ey+1,5);P(ex2-1,ey+1,5)}
    else{for(const[a,b]of[[0,0],[-1,0],[0,1],[-1,1]])P(ex2+a,ey+b,5);P(ex2,ey,4);if(es==2){P(ex2-1,ey-1,5);P(ex2-2,ey-2,5)}}},
@@ -1363,7 +1363,7 @@ const gen=function(i,tr,att){const r=rng(i*7919+13+(att|0)*104729),g=Array.from(
   else if(t==14){const bw=ri(2,3);E(14,bw,4,1);E(9,3,3,1);P(9,6,1);P(9,5,1);P(8,5,1);for(let k=0;k<7;k++)for(let j=0;j<=6-k;j++)P(8-j,9+k,6);by=14;bry=4;brx=bw;ay=6;hc=9;hw=3;SHF();P(10,11,4)}
   else if(t==15){hw=7;hc=12;E(12,7,4,1);E(17,ri(3,4),4,1);by=17;bry=4;brx=4;ay=6;for(const[dx,dy]of[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]])P(7+dx,8+dy,1);SHF();P(7,8,4);P(6,8,4);P(7,7,4);P(6,7,4);P(7,8,5);P(7,7,5);for(let x=6;x<=11;x++)P(x,14,5);P(5,20,1);P(4,21,1);P(3,22,2);P(4,22,2);eyes=0}
   else{const sr=ri(6,8),sh=ri(4,5);E(17,sr,sh,1);E(12,Math.round(sr*.55),ri(3,4),1);P(11,8,1);by=17;bry=sh;brx=sr;ay=9;hc=15;hw=sr*1.2;SHF();P(8,12,4);P(7,13,4);P(8,13,4);P(11,18,5);P(10,18,5)}
-  ax=11;if(eyes)EYv(hc,hw)
+  ax=11;if(eyes)EYv(hc,hw);HC=hc;HW=hw
  }else{bx=9;by=14;
   if(t==4||t==8){brx=ri(6,8);bry=ri(3,5);F(bx,by,brx,bry,1);hr=ri(3,4);const nk=ri(0,4);hx=bx+brx+(nk>2?-1:0);hy=by-bry+1-nk;F(hx+1,hy,hr+1,hr,1);if(nk>1)for(let k=1;k<=nk;k++){Q(hx-1,hy+k,1);Q(hx,hy+k,1)}
    for(const lx of[bx-brx+2,bx-brx+4,bx+brx-5,bx+brx-3]){const n=ri(2,4);for(let k=0;k<=n;k++){Q(lx,by+bry-1+k,2);Q(lx+1,by+bry-1+k,2)}}
@@ -1383,10 +1383,27 @@ const gen=function(i,tr,att){const r=rng(i*7919+13+(att|0)*104729),g=Array.from(
   ax=hx;ay=hy-hr;
   for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1){if(y==0||g[y-1][x]==0)Q(x,y,3);else if(y<NS-1&&g[y+1][x]==0)Q(x,y,2)}
   if(t!=7)for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1&&y>by+bry*.35)Q(x,y,7)}
+ const M=(dx,dy,v)=>{if(fr)P(11-dx,ay+dy,v);else{Q(ax+dx,ay+dy,v);Q(ax-dx,ay+dy,v)}};
+ {const sg=Math.floor(i/17)%16,ey0=Math.round(HC-1),ex0=Math.round(11.5-HW*.5);
+ switch(sg){
+ case 1:for(let k=0;k<4;k++)M(k,0,17);for(let k=1;k<=3;k++){M(0,-k,17);M(1,-k,17)}M(0,-1,6);M(1,-1,6);break;
+ case 2:for(let k=0;k<4;k++)M(k,0,6);for(let k=0;k<3;k++)M(k,-1,6);M(0,-2,6);M(1,-2,6);M(0,-3,6);M(0,-4,6);M(0,-2,9);break;
+ case 3:{const q=ax+3;Q(q,ay,6);Q(q+1,ay-1,6);Q(q+1,ay+1,6);Q(q+2,ay-1,6);Q(q+2,ay+1,6);Q(q+1,ay,9);break}
+ case 4:for(let k=1;k<=4;k++)M(0,-k,6);M(1,-1,6);M(1,-2,6);break;
+ case 5:M(2,0,9);M(2,-1,9);M(3,-2,9);M(3,-3,9);M(4,-3,9);M(2,-2,9);break;
+ case 6:if(fr){for(let dx=0;dx<=HW;dx++)P(11-dx,ay+2,6);P(11-HW-1,ay+2,6);P(11-HW-2,ay+3,6);P(11-HW-1,ay+4,6)}else{for(let k=-hr;k<=hr;k++)Q(hx+k,hy-hr+1,6);Q(hx-hr-1,hy-hr+1,6);Q(hx-hr-2,hy-hr+2,6)}break;
+ case 7:if(fr){const y=by-bry+1;for(let dx=0;dx<=brx;dx++)P(11-dx,y,6);for(let k=1;k<=3;k++)Q(14,y+k,6)}else{Q(hx-1,hy+hr-1,6);Q(hx,hy+hr-1,6);Q(hx-1,hy+hr,6);Q(hx,hy+hr,6);Q(hx-2,hy+hr+1,6);Q(hx-3,hy+hr+2,6)}break;
+ case 8:if(fr){for(let k=-bry+1;k<=bry;k++){P(11-brx-1,by+k,6);P(11-brx-2,by+k,6)}}else{for(let k=0;k<bry*2;k++)Q(bx-brx-1-Math.floor(k/3),by-bry+1+k,6)}break;
+ case 9:if(fr){P(11,by,9);P(11,by-1,9);P(11,by+1,9);P(10,by,9)}else{Q(bx,by,9);Q(bx-1,by,9);Q(bx+1,by,9);Q(bx,by-1,9);Q(bx,by+1,9)}break;
+ case 10:if(fr){for(let k=1;k<=3;k++){P(11-HW-k,HC+1,5);P(11-HW-k,HC+3,5)}P(11-HW-1,HC+2,5)}else{for(let k=1;k<=3;k++){Q(hx+hr+1+k,hy+1,5);Q(hx+hr+1+k,hy+3,5)}}break;
+ case 11:if(fr){P(10,HC+3,4);P(10,HC+4,4);P(8,HC+3,4);P(8,HC+4,4)}else{Q(hx+hr+1,hy+2,4);Q(hx+hr+1,hy+3,4);Q(hx+hr-1,hy+2,4);Q(hx+hr-1,hy+3,4)}break;
+ case 12:if(fr){const cx=11-Math.round(HW*.75);P(cx,HC+2,6);P(cx-1,HC+2,6);P(cx,HC+3,6)}else{Q(hx,hy+2,6);Q(hx+1,hy+2,6);Q(hx,hy+3,6)}break;
+ case 13:if(fr){const sx=ex0-1;Q(sx,ey0-2,5);Q(sx+1,ey0-1,5);Q(sx+2,ey0,5);Q(sx+3,ey0+1,5);Q(sx+4,ey0+2,5)}else{Q(hx+1,hy-3,5);Q(hx+2,hy-2,5);Q(hx+3,hy-1,5);Q(hx+4,hy,5)}break;
+ case 14:if(fr){P(11-brx-1,by-bry+1,6);P(11-brx-2,by-bry,6);P(11-brx-2,by-bry+1,6);P(11-brx-3,by-bry-1,6)}else{for(let k=0;k<4;k++)Q(bx-3+k*2,by-bry-1-(k%2),6)}break;
+ case 15:if(fr&&t!=9&&t!=15){for(let y=ey0-1;y<=ey0+2;y++){P(ex0-2,y,5);P(ex0+1,y,5)}for(let x=ex0-1;x<=ex0;x++){P(x,ey0-1,5);P(x,ey0+2,5)}P(11,ey0,5)}else if(fr){const y=by-bry+1;P(9,y,6);P(10,y,6);P(11,y,9);P(9,y+1,6);P(9,y-1,6)}else{Q(hx-1,hy+hr,6);Q(hx,hy+hr,6);Q(hx+1,hy+hr,9);Q(hx-1,hy+hr+1,6);Q(hx-1,hy+hr-1,6)}break}}
  if(ps==4)for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1&&x%4==0)Q(x,y,6);
  if(ps==5)for(let y=0;y<NS;y++)for(let x=0;x<NS;x++)if(g[y][x]==1&&(x+y*2)%7==0)Q(x,y,6);
  if(tr==-1)return g;
- const M=(dx,dy,v)=>{if(fr)P(11-dx,ay+dy,v);else{Q(ax+dx,ay+dy,v);Q(ax-dx,ay+dy,v)}};
  const MO={f:()=>{M(0,-1,12);M(1,-1,11);M(0,-2,11);M(0,-3,12)},w:()=>{M(0,-1,13);M(1,-1,13);M(0,-2,13);M(0,-3,13)},g:()=>{M(0,-1,16);M(0,-2,16);M(1,-3,16);M(2,-3,16);M(2,-2,16)},t:()=>{M(0,-1,15);M(1,-2,15);M(0,-3,15);M(1,-4,15)},r:()=>{M(0,-1,14);M(1,-1,14);M(0,-2,14);M(2,-1,14)},i:()=>{for(let k=1;k<=4;k++)M(0,-k,13);M(2,-1,13);M(2,-2,13);M(3,-1,13)},l:()=>{M(0,-3,9);M(1,-3,9);M(2,-3,9);M(3,-2,9);M(3,-1,9)},d:()=>{M(1,-1,17);M(2,-1,17);M(2,-2,17);M(3,-3,17)}};
  (MO[el]||MO.f)();
  const cx=fr?11:bx,cy=by;
@@ -1403,6 +1420,7 @@ let ATT=null;const pc=n=>{n=n-((n>>>1)&0x55555555);n=(n&0x33333333)+((n>>>2)&0x3
  dst=(a,b)=>{let c=0;for(let k=0;k<18;k++)c+=pc(a[k]^b[k]);return c},XTH=34;
 const xAtt=i=>{if(!ATT){ATT=[];const ms=[],N=typeof SP!='undefined'?SP.length:0;for(let k=0;k<N;k++){let best=0,bd=-1,bm=null;for(let a=0;a<40;a++){const m=mkb(gen(k,-1,a));let d=1e9;for(const o of ms){const c=dst(m,o);if(c<d)d=c;if(d<=bd)break}if(d>bd){bd=d;best=a;bm=m}if(bd>=XTH)break}ATT.push(best);ms.push(bm)}}return ATT[i]||0};
 window.xGrid=(i,tr)=>gen(i,tr,xAtt(i));
+window.xSig=i=>{const t=(i*5+3)%17,g=Math.floor(i/17)%16;return g==15&&(t==9||t==15)?'나비넥타이':['기본형','중절모','마법사 모자','머리 리본','모히칸','굽은 뿔','머리띠','목도리','망토','가슴 문장','수염','송곳니','발그레 볼','눈가 흉터','어깨 가시','안경'][g]};
 const EM={},EH={f:8,w:205,g:115,t:50,r:28,i:192,l:46,d:278},ES={f:[75,52],w:[70,52],g:[60,48],t:[85,55],r:[30,42],i:[55,70],l:[90,70],d:[45,32]},pal=(i,el)=>{const r=rng(i*31+7),h=(i*137.508+(EH[el]||0)*.15)%360,[s0,l0]=ES[el]||[60,50],s=s0+(r()-.5)*20,l=l0+(r()-.5)*10,h2=(h+140+r()*80)%360;return[0,`hsl(${h},${s}%,${l}%)`,`hsl(${h},${s}%,${l-18}%)`,`hsl(${h},${s}%,${l+16}%)`,'#ffffff','#1a1c2c',`hsl(${h2},70%,55%)`,`hsl(${h},38%,${Math.min(88,l+32)}%)`,'#1a1c2c','#ffd36b',`hsl(${h2},95%,78%)`,'#ff7a1a','#ffd84d','#bfeaff','#7a7f96','#ffe94d','#4fbf5a','#3a1f5c']};
 window.xPal=pal;
 window.xSz=e=>{if(typeof SP=='undefined')return 0;if(!EM.k){SP.forEach((s,i)=>{EM[s[1]]=i});EM.k=1}const i=EM[e];if(i==null)return 0;const r=rng(i*13+5)();return+([.78,.86,.96,1.06,1.18,1.32][SP[i][2]]*(.92+r*.16)).toFixed(2)};
