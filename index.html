@@ -622,7 +622,8 @@ const XT=[['q','🎯','퀘스트'],['t','🗼','탑'],['r','🏋️','훈련'],[
 const xY=()=>new Date(Date.now()-864e5).toLocaleDateString('sv');
 const xS=()=>1+(S.st.maxS||1)/20;
 function xI(){const x=S.x=S.x||{};
-if(x.qd!==today()){x.qd=today();x.q={k:S.st.kills,d:S.st.dun,p:S.st.disp,h:S.st.hatch,u:S.st.up};x.qc={};x.qa=0;x.tk=5}
+if(x.qd!==today()){x.qd=today();x.q={k:S.st.kills,d:S.st.dun,p:S.st.disp,h:S.st.hatch,u:S.st.up,b:S.st.boss,v:S.st.ev||0};x.qc={};x.qa=0;x.tk=5}
+if(x.q.b===undefined)x.q.b=S.st.boss;if(x.q.v===undefined)x.q.v=S.st.ev||0;
 x.att=x.att||{s:0,l:'',m:0};x.tw=x.tw||{f:1,b:0};x.tr=x.tr||[null,null];x.dr=x.dr||{};x.tit=x.tit||0;x.tn=x.tn||0;return x}
 /* 난이도: 적 체력·반격, 파견 성공 기준에 곱해지고 보상도 같이 커져요 */
 const XDF={n:'도전',hp:5,atk:2,rw:2,tt:1};
@@ -640,9 +641,11 @@ const XQ=[
 {id:'d',n:'일일 던전 클리어',i:'🏰',need:2,v:x=>S.st.dun-x.q.d},
 {id:'p',n:'파견 완료',i:'🧭',need:3,v:x=>S.st.disp-x.q.p},
 {id:'h',n:'알 부화',i:'🥚',need:3,v:x=>S.st.hatch-x.q.h},
-{id:'u',n:'장비 강화',i:'🔨',need:2,v:x=>S.st.up-x.q.u}];
+{id:'u',n:'장비 강화',i:'🔨',need:2,v:x=>S.st.up-x.q.u},
+{id:'b',n:'사냥 보스 처치',i:'👹',need:3,v:x=>S.st.boss-(x.q.b||0)},
+{id:'v',n:'사냥 돌발 이벤트 선택',i:'🎲',need:2,v:x=>(S.st.ev||0)-(x.q.v||0)}];
 /* 퀘스트 보상: 퀘스트마다 다르고, 사냥터 최고 단계(층수)가 높을수록 커져요 */
-const XQB0={k:{g:600,s:2,o:1},d:{g:300,s:6,o:2},p:{g:300,s:3,o:4},h:{g:500,s:3,o:2},u:{g:300,s:2,o:6}};
+const XQB0={k:{g:600,s:2,o:1},d:{g:300,s:6,o:2},p:{g:300,s:3,o:4},h:{g:500,s:3,o:2},u:{g:300,s:2,o:6},b:{g:700,s:3,o:3},v:{g:500,s:4,o:4}};
 const xQm=()=>1+(S.st.maxS||1)/10;
 const xQr=id=>{const r=Object.assign({},XQB0[id]||{g:400,s:3,o:2}),f=S.st.maxS||1;if(id=='h'&&f>=30)r.egg='p';if(id=='d'&&f>=80)r.egg='p';if(id=='k'&&f>=150)r.egg='p';return r};
 const xQb2=()=>{const f=S.st.maxS||1;return f>=100?{g:2000,s:15,egg:'h'}:f>=30?{g:1500,s:10,egg:'p'}:{g:1000,s:6,o:5}};
@@ -1258,6 +1261,11 @@ const ST=[
 ['탑의 그림자','사냥터 깊은 곳에서 탑의 그림자가 길게 드리워졌어요. 몬스터들이 발걸음을 멈췄어요. 그림자 속에서 낮은 목소리가 들렸어요. "…돌려줘…"',()=>S.st.maxS>=30,'사냥터 30단계',[0,0,5]],
 ['갈림길','탑 꼭대기에서 오래된 빈 둥지를 발견했어요. 모든 알은 여기서 떨어져 나온 거였어요. 둥지는 텅 비어 있고, 둥지 안쪽엔 작은 알 자국이 남아 있어요. 이제 어떻게 할까요?',()=>S.st.maxS>=40,'사냥터 40단계',null,[['알을 둥지에 돌려놓는다','품고 있던 알 하나를 둥지에 놓자 탑이 부드럽게 빛났어요. 탑이 숨을 고르는 소리가 들렸어요.',[0,40,0]],['둥지를 가져간다','둥지를 안고 내려오자 탑이 길게 울었어요. 그 울음엔 원망이 아니라 기다림이 섞여 있었어요.',[15,0,5]]]],
 ['보금자리의 주인',()=>(S.st.sc&&S.st.sc[8]==0)?'탑은 다시 조용히 숨 쉬기 시작했어요. 모모는 웃으며 지팡이를 내려놓았어요. "이제 알은 필요한 만큼만 떨어질 거야. 이 보금자리, 이제 정말 네 거란다."':'둥지를 품은 보금자리는 한층 따뜻해졌어요. 모모가 속삭였어요. "탑은 널 용서한 게 아니야. 기다리는 거지. 언젠가 둥지를 돌려줄 날을."',()=>S.st.maxS>=50&&S.st.sc&&S.st.sc[8]!=null,'사냥터 50단계 + 갈림길 선택',[10,50,10]]];
+ST.push(
+['새벽의 둥지','탑이 잠든 새벽, 둥지 위로 처음 보는 빛이 내려앉았어요. 모모가 눈을 가늘게 떴어요. \"이 시간에 깨어 있는 둥지지기는 오랜만이구나. 새벽에 부화한 아이는 낮에도 밤에도 길을 잃지 않는단다.\"',()=>S.st.maxS>=60,'사냥터 60단계',[4,40,8]],
+['이름을 불러 주면','모모가 네 몬스터들을 하나씩 바라봤어요. \"이름을 불러 주면 아이들은 그 소리를 기억해. 싸움터에서도, 꿈속에서도 말이야. 이름이란 가장 오래 가는 선물이지.\"',()=>S.st.hatch>=100,'알 100번 부화',[6,0,10]],
+['쌍둥이 별','밤하늘에 별 두 개가 나란히 떴어요. 모모가 지팡이로 가리켰어요. \"저건 서로를 알아본 별들이야. 합쳐진다는 건 잃는 게 아니라, 하나의 별자리를 새로 짓는 일이란다.\"',()=>(S.st.fuse||0)>=5,'교배 5회',[0,60,10]],
+['둥지지기의 길','이제 둥지에는 수많은 몬스터가 모였어요. 모모가 마지막으로 말했어요. \"처음엔 알 하나였지. 지금 네 곁에 있는 아이들이 네가 걸어온 길이란다. 이 길은 어디까지든 이어질 거야.\"',()=>S.st.maxS>=80&&Object.keys(S.dex).length>=50,'사냥터 80단계 + 도감 50종',[15,100,20]]);
 const css=document.createElement('style');css.textContent='#pg{position:relative;height:230px;border-radius:14px;overflow:hidden;background:linear-gradient(#27406a 0 55%,#2f6b45 55%);border:2px solid var(--ln)}.nmo{position:absolute;width:34px;text-align:center;cursor:pointer;transition:left 2.4s steps(8),top 2.4s steps(8);font-size:26px}.nmo i{position:absolute;left:50%;top:-6px;font-style:normal;font-size:12px;transform:translateX(-50%)}#pb{position:absolute;left:6px;right:6px;bottom:6px;background:#fffd;color:#111;border-radius:10px;padding:5px 8px;font-size:13px;display:none}';document.head.appendChild(css);
 const init=(m,mu)=>{m.pe=rn(PE.length);if(Math.random()<(mu||.04)){m.mu=1;m.hu=40+rn(280)}return m};
 const fix=()=>S.mons.forEach(m=>{if(m.pe==null)init(m)});
